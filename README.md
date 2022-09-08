@@ -9,7 +9,7 @@ To install and run the bot:
 6. In order to update the bot:
     - Make a backup of the config in "./conf/config.yaml" and save it to some other location. 
     - Remove this directory ("NASA_BOT_PYTHON" is the default).
-    -Copy the new version of the bot to where ever you wish it install it.
-    -Repeat steps 2-5, but restore the old config by copying it to "./conf/config.yaml"
+    - Copy the new version of the bot to where ever you wish it install it.
+    - Repeat steps 2-5, but restore the old config by copying it to "./conf/config.yaml"
 
 This is planned to be changed in the future and have a proper updater
