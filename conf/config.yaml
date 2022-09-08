@@ -1,0 +1,9 @@
+APOD_URL: "https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY"
+#URL of the nasa api endpoint
+
+DISCORD_TOKEN: ""
+#Discord token from developer portal in the form of a string( Ex. "text")
+
+CHANNEL: 971765668221440073
+#Discord channle_id in the form of an interger(Ex. 52358934), can be obtained from the use of discord dev tools
+
