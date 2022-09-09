@@ -6,8 +6,8 @@ from NASA_API.YAML_PARSER import yaml_parser
 class daily_report(commands.Cog):
     def __init__(self, client):
         self.client = client
-        self.api_image = api('conf\config.yaml', 'APOD_URL').json_data('url')
-        self.api_explination = api('conf\config.yaml', 'APOD_URL').json_data('explanation')
+        self.api_image = api('conf/config.yaml', 'APOD_URL').json_data('url')
+        self.api_explination = api('conf/config.yaml', 'APOD_URL').json_data('explanation')
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -17,7 +17,7 @@ class daily_report(commands.Cog):
 
     @tasks.loop(hours=24, reconnect=True)
     async def apod_daily(self):
-        self.channel = self.client.get_channel(yaml_parser('conf\config.yaml').parse_data('CHANNEL'))
+        self.channel = self.client.get_channel(yaml_parser('conf/config.yaml').parse_data('CHANNEL'))
 
         embed = discord.Embed(
             title="Astronomy Picture of the Day",

@@ -5,8 +5,8 @@ from NASA_API.API import api
 class apod(commands.Cog):
     def __init__(self, client):
         self.client = client
-        self.api_image = api('conf\config.yaml', 'APOD_URL').json_data('url')
-        self.api_explination = api('conf\config.yaml', 'APOD_URL').json_data('explanation')
+        self.api_image = api('conf/config.yaml', 'APOD_URL').json_data('url')
+        self.api_explination = api('conf/config.yaml', 'APOD_URL').json_data('explanation')
 
         #Gets the picture of the day via NASA_API
 

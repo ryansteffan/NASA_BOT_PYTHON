@@ -31,5 +31,5 @@ class api:
 
         #returns the spicific item from the json data
 
-#syntax:    api('conf\config.yaml', 'APOD_URL').json_data('url')
+#syntax:    api('conf/config.yaml', 'APOD_URL').json_data('url')
 

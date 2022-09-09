@@ -7,7 +7,9 @@ from NASA_API.YAML_PARSER import yaml_parser
 
 if __name__ == "__main__":
 
-    client = commands.Bot(command_prefix= '$')
+    intents = discord.Intents.all()
+
+    client = commands.Bot(command_prefix= '$', intents=intents)
 
     #Sets the prfix for the bot.
 
@@ -39,7 +41,7 @@ if __name__ == "__main__":
 
     #Loads all of the cogs on bot startup
 
-    conf_location = os.path.abspath('conf\config.yaml')
+    conf_location = os.path.abspath('conf/config.yaml')
 
     #Locates the yaml config file
 
@@ -51,5 +53,5 @@ if __name__ == "__main__":
 
     #Starts the bot.
 
-#NASA_API syntax:    api('conf\config.yaml', 'APOD_URL').json_data('url')
+#NASA_API syntax:    api('conf/config.yaml', 'APOD_URL').json_data('url')
 
