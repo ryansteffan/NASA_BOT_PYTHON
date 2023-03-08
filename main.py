@@ -1,4 +1,5 @@
 import os 
+import asyncio
 import discord
 from discord.ext import commands
 from NASA_API.YAML_PARSER import yaml_parser
@@ -32,13 +33,12 @@ if __name__ == "__main__":
     async def reload(ctx, extension):
         client.unload_extension(f'cogs.{extension}')
         client.load_extension(f'cogs.{extension}')
-
-        #Reloads an extention from the cogs folder
-
-    for filename in os.listdir("./cogs"):
-        if filename.endswith('.py'):
-            client.load_extension(f'cogs.{filename[:-3]}')
-
+    
+    async def load_extensions():
+        for filename in os.listdir("./cogs"):
+            if filename.endswith(".py"):
+                await client.load_extension(f"cogs.{filename[:-3]}")
+    
     #Loads all of the cogs on bot startup
 
     conf_location = os.path.abspath('conf/config.yaml')
@@ -49,9 +49,14 @@ if __name__ == "__main__":
 
     #Loads the token that is used to connect to the discord bot
 
-    client.run(TOKEN)
+    async def main_thread():
+        async with client:
+            await load_extensions()
+            await client.start(TOKEN)
+
+    asyncio.run(main_thread())
 
     #Starts the bot.
 
-#NASA_API syntax:    api('conf/config.yaml', 'APOD_URL').json_data('url')
+#NASA_API syntax:   api('conf/config.yaml', 'APOD_URL').json_data('url')
 

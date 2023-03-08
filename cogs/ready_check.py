@@ -11,5 +11,5 @@ class ready_check(commands.Cog):
 
         #Checks if the bot has started
 
-def setup(client):
-    client.add_cog(ready_check(client))
+async def setup(client):
+    await client.add_cog(ready_check(client))

@@ -31,5 +31,5 @@ class apod(commands.Cog):
 
         #Sends the call made from the api when apod is run in the server
 
-def setup(client):
-    client.add_cog(apod(client))
+async def setup(client):
+    await client.add_cog(apod(client))

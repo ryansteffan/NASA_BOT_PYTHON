@@ -11,5 +11,5 @@ class connection(commands.Cog):
 
         #Tests the server round trip time 
 
-def setup(client):
-    client.add_cog(connection(client))
+async def setup(client):
+    await client.add_cog(connection(client))

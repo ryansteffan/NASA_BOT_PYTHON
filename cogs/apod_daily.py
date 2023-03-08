@@ -36,7 +36,7 @@ class daily_report(commands.Cog):
         await self.channel.send(embed=embed)
         #Scheduals the apod to send every 24 hours from bot start
 
-def setup(client):
-    client.add_cog(daily_report(client))
+async def setup(client):
+    await client.add_cog(daily_report(client))
 
 
