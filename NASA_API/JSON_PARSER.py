@@ -15,7 +15,7 @@ class json_parser:
         #returns the json data in full
 
     def parse_data(self, dic_item):
-        item = self.json[dic_item]
-        return item
+        self.item = self.json[dic_item]
+        return self.item
 
         #Returns a given item from the full json data 
