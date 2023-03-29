@@ -11,7 +11,7 @@ class yaml_parser:
     def parse_data(self, index, item=0):
         with open(self.yaml_location, 'r') as file:
             self.out = yaml.safe_load(file)
-            self.condition = []
+            self.condition = {}
             if type(self.out[index]) == type(self.condition):
                 self.item_list = self.out[index]
                 return self.item_list[item]

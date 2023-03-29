@@ -7,3 +7,11 @@ DISCORD_TOKEN: ""
 CHANNEL: 971765668221440073
 #Discord channle_id in the form of an interger(Ex. 52358934), can be obtained from the use of discord dev tools
 
+TIME:
+
+  #Sets the hour for the bot to make the apod post (uses UTC.)
+  HOUR: 12
+
+  #Sets the minute of the hour for the bot to make the apod post (uses UTC.)
+  MINUTE: 00
+

@@ -1,4 +1,5 @@
 import discord
+import datetime
 from discord.ext import commands, tasks
 from NASA_API.API import api
 from NASA_API.YAML_PARSER import yaml_parser
@@ -14,7 +15,13 @@ class daily_report(commands.Cog):
 
         #Checks if the server has started
 
-    @tasks.loop(hours=24, reconnect=True)
+    
+    hour = yaml_parser('conf/config.yaml').parse_data('TIME', 'HOUR')
+    minute = yaml_parser('conf/config.yaml').parse_data('TIME', 'MINUTE')
+    time = datetime.time(hour=hour, minute=minute, tzinfo=datetime.timezone.utc)
+    #Sets the time for the bot to post the APOD. Time Zones to be added later
+
+    @tasks.loop(time=time, reconnect=True)
     async def apod_daily(self):
         self.channel = self.client.get_channel(yaml_parser('conf/config.yaml').parse_data('CHANNEL'))
         self.api_image = api('conf/config.yaml', 'APOD_URL').json_data('url')
