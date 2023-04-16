@@ -1,4 +1,19 @@
-To install and run the bot:
+<h1>To install and run the bot:</h1>
+
+Docker is the perfered method of install but it is not the only option that is avaiable, those are discussed below.
+
+<h2>To install via docker(Recommended):</h2>
+
+1. Clone the repo with "git clone https://github.com/TheTurnnip/NASA_BOT_PYTHON.git"
+2. Modifiy the config. Set the bot token, channel id, and the post time. MUST BE DONE BEFORE BUILDING IMAGE, AND TIME MUST BE UTC.
+3. run, "docker build . -t nasa_bot", to build the docker image.
+4. run "docker run nasa_bot" to start the bot.
+
+If you wish to have the bot to start at server boot then add "--restart always" to the run command (ie. "docker run --restart always nasa_bot")
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+<h2>Bare metal(Depercated)</h2>
 
 1. Copy the bot into the directory that you wish to install it in 
 2. Navigate to the directory using cd
@@ -12,4 +27,4 @@ To install and run the bot:
     - Copy the new version of the bot to where ever you wish it install it.
     - Repeat steps 2-5, but restore the old config by copying it to "./conf/config.yaml"
 
-This is planned to be changed in the future and have a proper updater
+PREVIOUS PLAN TO HAVE AN UPDATER HAS SHIFTED TO FAVOUR DOCKER SUPPORT
