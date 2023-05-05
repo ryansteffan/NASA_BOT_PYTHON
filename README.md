@@ -7,7 +7,7 @@ Docker is the perfered method of install but it is not the only option that is a
 1. Clone the repo with "git clone https://github.com/TheTurnnip/NASA_BOT_PYTHON.git"
 2. Modifiy the config. Set the bot token, channel id, and the post time. MUST BE DONE BEFORE BUILDING IMAGE, AND TIME MUST BE UTC.
 3. run, "docker build . -t nasa_bot", to build the docker image.
-4. run "docker run nasa_bot" to start the bot.
+4. run "docker run  -d nasa_bot" to start the bot.
 
 If you wish to have the bot to start at server boot then add "--restart always" to the run command (ie. "docker run --restart always nasa_bot")
 
