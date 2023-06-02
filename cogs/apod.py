@@ -13,23 +13,27 @@ class apod(commands.Cog):
     @commands.Command
     async def apod(self, ctx):
 
-        embed = discord.Embed(
-            title="Astronomy Picture of the Day",
-            url=self.api_image,
-            description=self.api_explination,
-            colour=discord.Colour.dark_blue()
-        )
+        if "youtube" in self.api_image:
+            await ctx.send(self.api_image)
+            #Checks if the APOD is a video and if it is, post just the video embed
+        else:
+            embed = discord.Embed(
+                title="Astronomy Picture of the Day",
+                url=self.api_image,
+                description=self.api_explination,
+                colour=discord.Colour.dark_blue()
+            )
 
-        #Creates the embed variable
+            #Creates the embed variable
 
-        embed.set_image(url=self.api_image)
-        embed.set_footer(text=self.api_image)
+            embed.set_image(url=self.api_image)
+            embed.set_footer(text=self.api_image)
 
-        #Sets the args used in the embed
+            #Sets the args used in the embed
 
-        await ctx.send(embed=embed)
+            await ctx.send(embed=embed)
 
-        #Sends the call made from the api when apod is run in the server
+            #Sends the call made from the api when apod is run in the server
 
 async def setup(client):
     await client.add_cog(apod(client))

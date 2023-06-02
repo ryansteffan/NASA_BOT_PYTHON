@@ -27,22 +27,26 @@ class daily_report(commands.Cog):
         self.api_image = api('conf/config.yaml', 'APOD_URL').json_data('url')
         self.api_explination = api('conf/config.yaml', 'APOD_URL').json_data('explanation')
 
-        self.embed = discord.Embed(
-            title="Astronomy Picture of the Day",
-            url=self.api_image,
-            description=self.api_explination,
-            colour=discord.Colour.dark_blue()
-        )
+        if "youtube" in self.api_image:            
+            await self.channel.send(self.api_image)
+            #Checks if the APOD is a video and if it is, post just the video embed
+        else:
+            self.embed = discord.Embed(
+                title="Astronomy Picture of the Day",
+                url=self.api_image,
+                description=self.api_explination,
+                colour=discord.Colour.dark_blue()
+            )
 
-        #Creates the embed variable
+            #Creates the embed variable
 
-        self.embed.set_image(url=self.api_image)
-        self.embed.set_footer(text=self.api_image)
+            self.embed.set_image(url=self.api_image)
+            self.embed.set_footer(text=self.api_image)
 
-        #Sets the args used for the embed
+            #Sets the args used for the embed
 
-        await self.channel.send(embed=self.embed)
-        #Scheduals the apod to send every 24 hours from bot start
+            await self.channel.send(embed=self.embed)
+            #Scheduals the apod to send every 24 hours from bot start
 
 async def setup(client):
     await client.add_cog(daily_report(client))
