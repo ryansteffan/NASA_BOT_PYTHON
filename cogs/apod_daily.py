@@ -21,7 +21,7 @@ class daily_report(commands.Cog):
     time = datetime.time(hour=hour, minute=minute, tzinfo=datetime.timezone.utc)
     #Sets the time for the bot to post the APOD. Time Zones to be added later
 
-    @tasks.loop(time=time, reconnect=True)
+    @tasks.loop(time=time)
     async def apod_daily(self):
         self.channel = self.client.get_channel(yaml_parser('conf/config.yaml').parse_data('CHANNEL'))
         self.api_image = api('conf/config.yaml', 'APOD_URL').json_data('url')
