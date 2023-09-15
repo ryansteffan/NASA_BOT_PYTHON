@@ -3,7 +3,7 @@ import datetime
 from discord.ext import commands, tasks
 from NASA_API.API import api
 from NASA_API.YAML_PARSER import yaml_parser
-from NASA_API.JSON_PARSER import json_parser
+
 
 class daily_report(commands.Cog):
     def __init__(self, client):
@@ -15,7 +15,6 @@ class daily_report(commands.Cog):
 
         #Checks if the server has started
 
-    
     hour = yaml_parser('conf/config.yaml').parse_data('TIME', 'HOUR')
     minute = yaml_parser('conf/config.yaml').parse_data('TIME', 'MINUTE')
     time = datetime.time(hour=hour, minute=minute, tzinfo=datetime.timezone.utc)
@@ -27,9 +26,8 @@ class daily_report(commands.Cog):
         self.api_image = api('conf/config.yaml', 'APOD_URL').json_data('url')
         self.api_explination = api('conf/config.yaml', 'APOD_URL').json_data('explanation')
 
-        if "youtube" in self.api_image:            
+        if "youtube" in self.api_image:
             await self.channel.send(self.api_image)
-            #Checks if the APOD is a video and if it is, post just the video embed
         else:
             self.embed = discord.Embed(
                 title="Astronomy Picture of the Day",
@@ -37,12 +35,10 @@ class daily_report(commands.Cog):
                 description=self.api_explination,
                 colour=discord.Colour.dark_blue()
             )
-
             #Creates the embed variable
-
+            
             self.embed.set_image(url=self.api_image)
             self.embed.set_footer(text=self.api_image)
-
             #Sets the args used for the embed
 
             await self.channel.send(embed=self.embed)
