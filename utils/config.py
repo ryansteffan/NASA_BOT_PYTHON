@@ -9,16 +9,19 @@ class Config:
     Represents a config file and it's contents
     """
 
-    def __init__(self, path: str) -> None:
+    def __init__(self, path: str = "./conf/config.yaml") -> None:
         """
         Creates an instance of the Config class.
 
         Args:
             path (str): The path to the config file.
         """
-        self._file_path = os.path.abspath(path)
-        with open(path) as file:
-            self._config_data = yaml.safe_load(file)
+        try:
+            self._file_path = os.path.abspath(path)
+            with open(path) as file:
+                self._config_data = yaml.safe_load(file)
+        except FileNotFoundError:
+            raise FileNotFoundError("The Path provided is not valid.")
 
     @property
     def file_path(self) -> str:
@@ -34,9 +37,12 @@ class Config:
         Args:
             value (str): The path to the config file being set.
         """
-        self._file_path = os.path.abspath(value)
-        with open(value) as file:
-            self._config_data = yaml.safe_load(file)
+        try:
+            self._file_path = os.path.abspath(value)
+            with open(value) as file:
+                self._config_data = yaml.safe_load(file)
+        except FileNotFoundError:
+            raise FileNotFoundError("The Path provided is not valid.")
 
     @property
     def config_data(self) -> dict:
@@ -53,11 +59,11 @@ class Config:
             index (str): The name of the item being looked for in the config.
 
         Raises:
-            ValueError: Is raised when the index value
+            AttributeError: Is raised when the index value
             is not found in the config file
 
         Returns:
-            str | int| float| list | dict: The value of the specified item.
+            str | int | float | list | dict: The value of the specified item.
         """
         queue = deque([self.config_data])
 
@@ -69,7 +75,7 @@ class Config:
                 elif isinstance(value, dict):
                     queue.append(value)
 
-        raise ValueError(f"{index} is not in the config file.")
+        raise AttributeError(f"{index} is not in the config file.")
 
     def update_unique_item(self, index: str,
                            new_value: str | int | float | list) -> None:
@@ -81,7 +87,7 @@ class Config:
             in the config file is being set to.
 
         Raises:
-            ValueError: Is raised when the value could not be set due the
+            AttributeError: Is raised when the value could not be set due the
             item not existing in the config.
         """
         is_success = False
@@ -99,6 +105,6 @@ class Config:
                     queue.append(value)
 
         if not is_success:
-            raise ValueError(
+            raise AttributeError(
                 f"Value could not be set. Ensure that {index} is in the "
                 f"config file.")
