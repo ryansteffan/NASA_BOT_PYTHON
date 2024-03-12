@@ -34,6 +34,7 @@ class Config:
     def file_path(self, value: str) -> None:
         """
         Sets the value of the file path and updates the config being opened.
+
         Args:
             value (str): The path to the config file being set.
         """
@@ -81,6 +82,7 @@ class Config:
                            new_value: str | int | float | list) -> None:
         """
         Updates the value of a unique item in the config file.
+
         Args:
             index (str): The name of the item being looked for in the config.
             new_value (str | int | float | list): The new value that the item
