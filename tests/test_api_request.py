@@ -70,7 +70,6 @@ class TestApiRequest(TestCase):
         endpoint = self.image_endpoint
         api_data = self.image_request_data
 
-        # Act
         responses.add(
             responses.GET,
             url=endpoint,
@@ -79,6 +78,7 @@ class TestApiRequest(TestCase):
             content_type="application/json"
         )
 
+        # Act
         target = ApiRequest(endpoint)
         actual = target._endpoint
 
@@ -92,7 +92,6 @@ class TestApiRequest(TestCase):
         endpoint = self.image_endpoint
         api_data = self.image_request_data
 
-        # Act
         responses.add(
             responses.GET,
             url=endpoint,
@@ -100,6 +99,8 @@ class TestApiRequest(TestCase):
             status=200,
             content_type="applications/json"
         )
+
+        # Act
         target = ApiRequest(endpoint)
         actual = target._request_data
 
@@ -112,7 +113,6 @@ class TestApiRequest(TestCase):
         # Arrange
         endpoint = self.image_endpoint
         api_data = self.image_request_data
-
         responses.add(
             responses.GET,
             url=endpoint,
@@ -192,7 +192,7 @@ class TestApiRequest(TestCase):
         self.assertEqual(actual, expected)
 
     @responses.activate
-    def test_response_data_get_value(self):
+    def test_request_data_get_value(self):
         # Arrange
         endpoint = self.image_endpoint
         api_data = self.image_request_data
