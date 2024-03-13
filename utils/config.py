@@ -60,8 +60,8 @@ class Config:
             index (str): The name of the item being looked for in the config.
 
         Raises:
-            AttributeError: Is raised when the index value
-            is not found in the config file
+            AttributeError: Is raised when the index value is not found in
+                            the config file
 
         Returns:
             str | int | float | list | dict: The value of the specified item.
@@ -86,11 +86,12 @@ class Config:
         Args:
             index (str): The name of the item being looked for in the config.
             new_value (str | int | float | list): The new value that the item
-            in the config file is being set to.
+                                                  in the config file is being
+                                                  set to.
 
         Raises:
             AttributeError: Is raised when the value could not be set due the
-            item not existing in the config.
+                            item not existing in the config.
         """
         is_success = False
         queue = deque([self.config_data.copy()])
