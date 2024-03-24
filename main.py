@@ -1,62 +1,39 @@
-import os 
-import asyncio
 import discord
 from discord.ext import commands
-from NASA_API.YAML_PARSER import yaml_parser
 
-#imports all of the packages that are used in the main file. 
+from utils.config import Config
 
-if __name__ == "__main__":
-
+if __name__ == '__main__':
+    config = Config()
     intents = discord.Intents.all()
+    prefix = config.get_unique_item("prefix")
+    token = config.get_unique_item("token")
+    guild = discord.Object(config.get_unique_item("guild"))
+    bot = commands.Bot(command_prefix=prefix, intents=intents)
 
-    client = commands.Bot(command_prefix= '$', intents=intents)
 
-    #Sets the prfix for the bot.
+    @bot.event
+    async def on_ready() -> None:
+        """
+        Prints bot start status and then syncs the commands.
+        """
+        print(f"The bot has started... ")
+        await bot.load_extension("cogs.ping")
 
-    @client.command()
-    @commands.has_role("NASA_Bot")
-    async def load(ctx, extension):
-        client.load_extension(f'cogs.{extension}')
 
-        #Loads an extention from the cogs folder
+    @bot.command()
+    async def sync(ctx: commands.Context) -> None:
+        """
+        Manually syncs the app commands for the discord bot.
 
-    @client.command()
-    @commands.has_role("NASA_Bot")
-    async def unload(ctx, extension):
-        client.unload_extension(f'cogs.{extension}')
+        Args:
+            ctx (commands.Context): The context for the command.
+        """
+        synced = await bot.tree.sync(guild=guild)
+        if synced:
+            await ctx.channel.send("Slash commands have been synced.")
+        else:
+            await ctx.channel.send("Failed to sync the commands.")
 
-        #Unloads an extention from the cogs folder
 
-    @client.command()
-    @commands.has_role("NASA_Bot")
-    async def reload(ctx, extension):
-        client.unload_extension(f'cogs.{extension}')
-        client.load_extension(f'cogs.{extension}')
-    
-    async def load_extensions():
-        for filename in os.listdir("./cogs"):
-            if filename.endswith(".py"):
-                await client.load_extension(f"cogs.{filename[:-3]}")
-    
-    #Loads all of the cogs on bot startup
-
-    conf_location = os.path.abspath('conf/config.yaml')
-
-    #Locates the yaml config file
-
-    TOKEN = yaml_parser(conf_location).parse_data('DISCORD_TOKEN')
-
-    #Loads the token that is used to connect to the discord bot
-
-    async def main_thread():
-        async with client:
-            await load_extensions()
-            await client.start(TOKEN)
-
-    asyncio.run(main_thread())
-
-    #Starts the bot.
-
-#NASA_API syntax:   api('conf/config.yaml', 'APOD_URL').json_data('url')
-
+    bot.run(token)
