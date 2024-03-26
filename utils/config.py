@@ -94,7 +94,8 @@ class Config:
                             item not existing in the config.
         """
         is_success = False
-        queue = deque([self.config_data.copy()])
+        new_data = self.config_data.copy()
+        queue = deque([new_data])
 
         while queue:
             data = queue.popleft()
@@ -102,7 +103,7 @@ class Config:
                 if str(key) == index:
                     data[key] = new_value
                     with open(self.file_path, 'w') as file:
-                        yaml.safe_dump(self.config_data, file)
+                        yaml.safe_dump(new_data, file)
                     is_success = True
                 elif isinstance(value, dict):
                     queue.append(value)
