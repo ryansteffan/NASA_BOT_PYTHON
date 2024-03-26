@@ -94,7 +94,8 @@ class Config:
                             item not existing in the config.
         """
         is_success = False
-        queue = deque([self.config_data.copy()])
+        new_data = self.config_data.copy()
+        queue = deque([new_data])
 
         while queue:
             data = queue.popleft()
@@ -102,7 +103,7 @@ class Config:
                 if str(key) == index:
                     data[key] = new_value
                     with open(self.file_path, 'w') as file:
-                        yaml.safe_dump(self.config_data, file)
+                        yaml.safe_dump(new_data, file)
                     is_success = True
                 elif isinstance(value, dict):
                     queue.append(value)
@@ -111,3 +112,28 @@ class Config:
             raise AttributeError(
                 f"Value could not be set. Ensure that {index} is in the "
                 f"config file.")
+
+    def get_section_item(self, section_name: str, index: str) -> str:
+        """
+        Gets an item that is part of a specific section of the config file.
+
+        Args:
+            section_name (str): The section that the item is in.
+            index (str): The item that is being looked for in the config.
+
+        Returns:
+            str | int | float | list | dict: The value of the specified item.
+
+        """
+        queue = deque([self.config_data])
+
+        while queue:
+            data = queue.popleft()
+            for key, value in data.items():
+                if isinstance(value, dict) and str(key) == section_name:
+                    queue.append(value)
+                elif str(key) == index:
+                    return value
+
+        raise AttributeError(f"{index} is not in the {section_name} "
+                             f"section of the config file.")

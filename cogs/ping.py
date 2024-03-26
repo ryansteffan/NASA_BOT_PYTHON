@@ -2,12 +2,8 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from utils.config import Config
-
 
 class Ping(commands.Cog):
-    _config = Config()
-    _guild = discord.Object(id=_config.get_unique_item("guild"))
 
     def __init__(self, bot: commands.Bot) -> None:
         """
@@ -19,8 +15,8 @@ class Ping(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name="ping", description="Checks the bot latency.")
-    @app_commands.guilds(_guild)
-    async def ping(self, interaction: discord.Interaction,
+    async def ping(self,
+                   interaction: discord.Interaction,
                    show_latency: bool = True) -> None:
         """
         Creates the ping command.
@@ -33,7 +29,7 @@ class Ping(commands.Cog):
         """
         message = "Pong..."
         if show_latency:
-            message = f"Pong... {round(self.bot.latency, 2) * 1000}"
+            message = f"Pong... {round(self.bot.latency, 2) * 1000}ms"
         await interaction.response.send_message(message)
 
 
@@ -44,4 +40,4 @@ async def setup(bot: commands.Bot) -> None:
     Args:
         bot (commands.Bot): The bot to add the commands to.
     """
-    await bot.add_cog(Ping(bot))
+    await bot.add_cog(Ping(bot), guilds=bot.guilds)

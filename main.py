@@ -1,3 +1,5 @@
+import os
+
 import discord
 from discord.ext import commands
 
@@ -18,7 +20,9 @@ if __name__ == '__main__':
         Prints bot start status and then syncs the commands.
         """
         print(f"The bot has started... ")
-        await bot.load_extension("cogs.ping")
+        for filename in os.listdir("./cogs"):
+            if filename.endswith(".py") and "__init__" not in filename:
+                await bot.load_extension(f"cogs.{filename[:-3]}")
 
 
     @bot.command()
