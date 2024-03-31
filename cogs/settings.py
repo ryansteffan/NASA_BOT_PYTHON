@@ -10,7 +10,7 @@ from utils.config import Config
 class Settings(commands.GroupCog, name="setting"):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
-        self.history_size = 4
+        self.history_size: int = 4
         self.history: list[dict] = []
 
     def reset_history(self) -> None:
