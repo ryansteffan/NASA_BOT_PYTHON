@@ -4,4 +4,4 @@ This is the file that stores all the classes that represent exceptions.
 
 ## NasaApiDataNotFoundError
 
-::: nasa_api.NasaApiDataNotFoundError
+::: src.nasa_api.NasaApiDataNotFoundError

@@ -1,3 +1,3 @@
 # Config
 
-::: utils.Config
+::: src.utils.Config

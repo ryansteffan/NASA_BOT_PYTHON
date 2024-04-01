@@ -1,5 +1,5 @@
-from nasa_api.api_request import ApiRequest
-from nasa_api.nasa_api_errors import NasaApiDataNotFoundError
+from src.nasa_api.api_request import ApiRequest
+from src.nasa_api.nasa_api_errors import NasaApiDataNotFoundError
 
 
 class Apod(ApiRequest):

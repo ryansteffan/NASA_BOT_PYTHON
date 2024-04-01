@@ -1,3 +1,3 @@
 # ApiRequest
 
-::: nasa_api.ApiRequest
+::: src.nasa_api.ApiRequest

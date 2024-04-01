@@ -4,7 +4,7 @@ This package contains the classes that are used for wrapping the NASA Open APIs.
 
 ## Classes
 
-- [NasaApi](nasa_api.md)
+- [ApiRequest](api_request.md)
 - [Apod](apod.md)
 
 ## Exception Classes:

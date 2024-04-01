@@ -1,3 +1,3 @@
 # Apod
 
-::: nasa_api.Apod
+::: src.nasa_api.Apod

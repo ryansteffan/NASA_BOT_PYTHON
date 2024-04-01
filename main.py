@@ -4,9 +4,9 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from utils.config import Config
+from src.utils import Config
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     config = Config()
     intents = discord.Intents.all()
     prefix = config.get_unique_item("prefix")
@@ -21,9 +21,9 @@ if __name__ == '__main__':
         Prints bot start status and then syncs the commands.
         """
         print(f"The bot has started... ")
-        for file in os.listdir("./cogs"):
+        for file in os.listdir("src/cogs"):
             if file.endswith(".py") and "__init__" not in file:
-                await bot.load_extension(f"cogs.{file[:-3]}")
+                await bot.load_extension(f"src.cogs.{file[:-3]}")
 
 
     @bot.hybrid_command(name="list_extensions", with_app_command=True)
@@ -38,7 +38,7 @@ if __name__ == '__main__':
         """
         description = ""
         counter = 0
-        for file in os.listdir("./cogs"):
+        for file in os.listdir("src/cogs"):
             if file.endswith(".py") and "__init__" not in file:
                 description = description + f"{counter}. {file[:-3]}\n"
                 counter = counter + 1
@@ -65,7 +65,7 @@ if __name__ == '__main__':
         """
         try:
             if extension == "*":
-                for filename in os.listdir("./cogs"):
+                for filename in os.listdir("src/cogs"):
                     if filename.endswith(".py") and "__init__" not in filename:
                         await bot.load_extension(f"cogs.{filename[:-3]}")
                         await ctx.reply("All extensions have been loaded.")
@@ -96,7 +96,7 @@ if __name__ == '__main__':
         """
         try:
             if extension == "*":
-                for filename in os.listdir("./cogs"):
+                for filename in os.listdir("src/cogs"):
                     if filename.endswith(".py") and "__init__" not in filename:
                         await bot.unload_extension(f"cogs.{filename[:-3]}")
                         await ctx.reply("All extensions have been unloaded.")
