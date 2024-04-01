@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 import discord
 from discord import app_commands
@@ -147,6 +148,20 @@ if __name__ == "__main__":
             await ctx.channel.send("Slash commands have been synced.")
         else:
             await ctx.channel.send("Failed to sync the commands.")
+
+
+    @bot.hybrid_command(name="core_reload", with_app_command=True)
+    @app_commands.guilds(guild)
+    async def core_reload(ctx: commands.Context) -> None:
+        """
+        Creates a command used to restart the bot when needed.
+
+        Args:
+            ctx (discord.ext.commands.Context): The context with which the
+                                                command was invoked.
+        """
+        await ctx.reply("The bot is being restarted.")
+        subprocess.call(["bash", "./src/bootstrap_bot/bootstrap.bash"])
 
 
     bot.run(token)
