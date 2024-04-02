@@ -8,7 +8,18 @@ from src.utils.config import Config
 
 
 class Settings(commands.GroupCog, name="setting"):
+    """
+    Represents the settings commands for the discord bot.
+    """
+
     def __init__(self, bot: commands.Bot) -> None:
+        """
+        Creates an instance of the Settings class.
+
+        Args:
+            bot (discord.ext.commands.Bot): The bot that the cog is being
+                                            added to.
+        """
         self.bot = bot
         self.history_size: int = 4
         self.history: list[dict] = []
@@ -24,8 +35,15 @@ class Settings(commands.GroupCog, name="setting"):
         name="list_all",
         description="Displays all the current settings for the bot."
     )
-    async def view(self, interaction: discord.Interaction):
-        # TODO: Make this multi page
+    @app_commands.checks.has_permissions(administrator=True)
+    async def list_all(self, interaction: discord.Interaction) -> None:
+        """
+        Lists all the settings for the discord bot.
+
+        Args:
+            interaction (discord.Interaction): Represents the interaction
+                                               with discord.
+        """
         config = Config()
         config_items = config.config_data.items()
         bot_name = self.bot.user
@@ -63,10 +81,20 @@ class Settings(commands.GroupCog, name="setting"):
         name="set",
         description="Set the state of a setting."
     )
+    @app_commands.checks.has_permissions(administrator=True)
     async def set(self,
                   interaction: discord.Interaction,
                   setting: str,
                   new_value: str) -> None:
+        """
+        Sets a setting in the discord bot configuration file.
+
+        Args:
+            interaction (discord.Interaction): Represents the interaction
+                                               with discord.
+            setting (str): The setting that is being changed.
+            new_value (str): The new value for the setting.
+        """
         config = Config()
         setting = str(setting).strip()
         new_value = str(new_value).strip()
@@ -96,9 +124,18 @@ class Settings(commands.GroupCog, name="setting"):
         name="unset",
         description="Sets a setting to the state of \"unset\"."
     )
+    @app_commands.checks.has_permissions(administrator=True)
     async def unset(self,
                     interaction: discord.Interaction,
-                    setting: str):
+                    setting: str) -> None:
+        """
+        Sets a value in the discord bot configuration to a value of "unset".
+
+        Args:
+            interaction (discord.Interaction): Represents the interaction
+                                               with discord.
+            setting (str): The setting to "unset".
+        """
         config = Config()
         setting = str(setting).strip()
         try:
@@ -128,7 +165,15 @@ class Settings(commands.GroupCog, name="setting"):
         description="Displays the history for the past 5 changes that have "
                     "been made to the settings."
     )
-    async def view_history(self, interaction: discord.Interaction):
+    @app_commands.checks.has_permissions(administrator=True)
+    async def view_history(self, interaction: discord.Interaction) -> None:
+        """
+        List the history of changes to the bot settings.
+
+        Args:
+            interaction (discord.Interaction): Represents the interaction
+                                               with discord.
+        """
         setting_index = 0
         embed = discord.Embed(
             title="Recent Changes:",
@@ -152,7 +197,18 @@ class Settings(commands.GroupCog, name="setting"):
         description="Allows for a previous setting to be restored. Can only "
                     "be done on the past 5 commands executed"
     )
-    async def restore(self, interaction: discord.Interaction, change: int):
+    @app_commands.checks.has_permissions(administrator=True)
+    async def restore(self,
+                      interaction: discord.Interaction,
+                      change: int) -> None:
+        """
+        Restores a past setting change to the previous state.
+
+        Args:
+            interaction (discord.Interaction): Represents the interaction
+                                               with discord.
+            change (int): The number of the change that is to be reverted.
+        """
         config = Config()
         try:
             change = self.history[change]
@@ -168,4 +224,10 @@ class Settings(commands.GroupCog, name="setting"):
 
 
 async def setup(bot: commands.Bot):
+    """
+    Adds the commands to a bot when the extension is loaded.
+
+    Args:
+        bot (commands.Bot): The bot to add the commands to.
+    """
     await bot.add_cog(Settings(bot), guilds=bot.guilds)

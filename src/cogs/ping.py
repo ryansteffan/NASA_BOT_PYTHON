@@ -10,7 +10,8 @@ class Ping(commands.Cog):
         Creates an instance of the Ping class.
 
         Args:
-            bot (commands.Bot): The discord bot the command is being added to.
+            bot (discord.ext.commands.Bot): The discord bot the command is
+                                            being added to.
         """
         self.bot = bot
 
@@ -19,7 +20,7 @@ class Ping(commands.Cog):
                    interaction: discord.Interaction,
                    show_latency: bool = True) -> None:
         """
-        Creates the ping command.
+        Pings the discord bot.
 
         Args:
             interaction (discord.Interaction): Represents the interaction

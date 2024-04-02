@@ -8,6 +8,7 @@ from discord.ext import commands
 from src.utils import Config
 
 if __name__ == "__main__":
+    # Sets up the initial state of the discord bot.
     config = Config()
     intents = discord.Intents.all()
     prefix = config.get_unique_item("prefix")
@@ -19,7 +20,7 @@ if __name__ == "__main__":
     @bot.event
     async def on_ready() -> None:
         """
-        Prints bot start status and then syncs the commands.
+        Prints bot start status and then loads all extensions if set.
         """
         print(f"The bot has started... ")
         for file in os.listdir("src/cogs"):
@@ -29,9 +30,10 @@ if __name__ == "__main__":
 
     @bot.hybrid_command(name="list_extensions", with_app_command=True)
     @app_commands.guilds(guild)
+    @commands.has_permissions(administrator=True)
     async def list_extensions(ctx: commands.Context) -> None:
         """
-        Creates a command used by the bot to list all the available extensions.
+        Lists all the extensions that are available to the bot.
 
         Args:
             ctx (discord.ext.commands.Context): The context with which the
@@ -53,9 +55,10 @@ if __name__ == "__main__":
 
     @bot.hybrid_command(name="load_extension", with_app_command=True)
     @app_commands.guilds(guild)
+    @commands.has_permissions(administrator=True)
     async def load_extension(ctx: commands.Context, extension="*") -> None:
         """
-        Creates a command used to load extensions for the discord bot.
+        Loads all available or a specified extension for the bot.
 
         Args:
             ctx (discord.ext.commands.Context): The context that the command
@@ -68,10 +71,10 @@ if __name__ == "__main__":
             if extension == "*":
                 for filename in os.listdir("src/cogs"):
                     if filename.endswith(".py") and "__init__" not in filename:
-                        await bot.load_extension(f"cogs.{filename[:-3]}")
+                        await bot.load_extension(f"src.cogs.{filename[:-3]}")
                         await ctx.reply("All extensions have been loaded.")
             else:
-                await bot.load_extension(f"cogs.{extension}")
+                await bot.load_extension(f"src.cogs.{extension}")
                 await ctx.reply(f"The extension {extension} has been loaded.")
         except commands.ExtensionAlreadyLoaded:
             await ctx.reply(f"The extension {extension} is already loaded.")
@@ -84,14 +87,14 @@ if __name__ == "__main__":
 
     @bot.hybrid_command(name="unload_extension", with_app_command=True)
     @app_commands.guilds(guild)
+    @commands.has_permissions(administrator=True)
     async def unload_extension(ctx: commands.Context, extension="*") -> None:
         """
-        Creates a command used to unload extensions used by the discord bot.
+        Unloads all loaded or a specified extension.
 
         Args:
             ctx (discord.ext.commands.Context): The context that the command
-            was invoked
-                                    with.
+                                                was invoked with.
             extension (str): The extension that is to be unloaded. If none is
                              specified then all extensions are unloaded.
         """
@@ -99,10 +102,10 @@ if __name__ == "__main__":
             if extension == "*":
                 for filename in os.listdir("src/cogs"):
                     if filename.endswith(".py") and "__init__" not in filename:
-                        await bot.unload_extension(f"cogs.{filename[:-3]}")
+                        await bot.unload_extension(f"src.cogs.{filename[:-3]}")
                         await ctx.reply("All extensions have been unloaded.")
             else:
-                await bot.unload_extension(f"cogs.{extension}")
+                await bot.unload_extension(f"src.cogs.{extension}")
                 await ctx.reply(f"The extension {extension} has been unloaded.")
         except commands.ExtensionNotLoaded:
             await ctx.reply(f"The extension {extension} is not loaded.")
@@ -115,9 +118,10 @@ if __name__ == "__main__":
 
     @bot.hybrid_command(name="reload_extension", with_app_command=True)
     @app_commands.guilds(guild)
+    @commands.has_permissions(administrator=True)
     async def reload_extension(ctx: commands.Context, extension="*") -> None:
         """
-        Creates a command used by the discord bot to reload extensions.
+        Reloads all the extensions or a specified one.
 
         Args:
             ctx (discord.ext.commands.Context): The context with which the
@@ -135,9 +139,10 @@ if __name__ == "__main__":
 
     @bot.hybrid_command(name="sync", with_app_command=True)
     @app_commands.guilds(guild)
+    @commands.has_permissions(administrator=True)
     async def sync(ctx: commands.Context) -> None:
         """
-        Creates a command used to sync the app_commands used by the bot.
+        Syncs the app commands (slash commands) to the bot.
 
         Args:
             ctx (discord.ext.commands.Context): The context with which the
@@ -152,9 +157,10 @@ if __name__ == "__main__":
 
     @bot.hybrid_command(name="core_reload", with_app_command=True)
     @app_commands.guilds(guild)
+    @commands.has_permissions(administrator=True)
     async def core_reload(ctx: commands.Context) -> None:
         """
-        Creates a command used to restart the bot when needed.
+        Fully restarts the bot.
 
         Args:
             ctx (discord.ext.commands.Context): The context with which the
@@ -162,6 +168,7 @@ if __name__ == "__main__":
         """
         await ctx.reply("The bot is being restarted.")
         subprocess.call(["bash", "./src/bootstrap_bot/bootstrap.bash"])
+        quit(0)
 
 
     bot.run(token)
