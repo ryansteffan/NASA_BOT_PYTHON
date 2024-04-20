@@ -2,7 +2,7 @@ from unittest import TestCase
 
 import responses
 
-from nasa_api.api_request import ApiRequest
+from src.nasa_api.api_request import ApiRequest
 
 
 class TestApiRequest(TestCase):

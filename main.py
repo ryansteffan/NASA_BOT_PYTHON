@@ -1,62 +1,165 @@
-import os 
-import asyncio
-import discord
-from discord.ext import commands
-from NASA_API.YAML_PARSER import yaml_parser
+import os
+import subprocess
 
-#imports all of the packages that are used in the main file. 
+import discord
+from discord import app_commands
+from discord.ext import commands
+
+from src.utils import Config
 
 if __name__ == "__main__":
-
+    # Sets up the initial state of the discord bot.
+    config = Config()
     intents = discord.Intents.all()
+    prefix = config.get_unique_item("prefix")
+    token = config.get_unique_item("token")
+    guild = discord.Object(config.get_unique_item("guild"))
+    bot = commands.Bot(command_prefix=prefix, intents=intents)
 
-    client = commands.Bot(command_prefix= '$', intents=intents)
+    @bot.event
+    async def on_ready() -> None:
+        """
+        Prints bot start status and then loads all extensions if set.
+        """
+        print(f"The bot has started... ")
+        for file in os.listdir("src/cogs"):
+            if file.endswith(".py") and "__init__" not in file:
+                await bot.load_extension(f"src.cogs.{file[:-3]}")
 
-    #Sets the prfix for the bot.
+    @bot.hybrid_command(name="list_extensions", with_app_command=True)
+    @app_commands.guilds(guild)
+    @commands.has_permissions(administrator=True)
+    async def list_extensions(ctx: commands.Context) -> None:
+        """
+        Lists all the extensions that are available to the bot.
 
-    @client.command()
-    @commands.has_role("NASA_Bot")
-    async def load(ctx, extension):
-        client.load_extension(f'cogs.{extension}')
+        Args:
+            ctx (discord.ext.commands.Context): The context with which the
+                                                command has been invoked.
+        """
+        description = ""
+        counter = 0
+        for file in os.listdir("src/cogs"):
+            if file.endswith(".py") and "__init__" not in file:
+                description = description + f"{counter}. {file[:-3]}\n"
+                counter = counter + 1
+        embed = discord.Embed(
+            title="Available Extensions:",
+            description=description,
+            color=discord.Color.red()
+        )
+        await ctx.reply(embed=embed)
 
-        #Loads an extention from the cogs folder
+    @bot.hybrid_command(name="load_extension", with_app_command=True)
+    @app_commands.guilds(guild)
+    @commands.has_permissions(administrator=True)
+    async def load_extension(ctx: commands.Context, extension="*") -> None:
+        """
+        Loads all available or a specified extension for the bot.
 
-    @client.command()
-    @commands.has_role("NASA_Bot")
-    async def unload(ctx, extension):
-        client.unload_extension(f'cogs.{extension}')
+        Args:
+            ctx (discord.ext.commands.Context): The context that the command
+                                                was invoked with.
+            extension (str): The extension specified by the user that should
+                             be loaded. If none is specified then all
+                             extensions are loaded.
+        """
+        try:
+            if extension == "*":
+                for filename in os.listdir("src/cogs"):
+                    if filename.endswith(".py") and "__init__" not in filename:
+                        await bot.load_extension(f"src.cogs.{filename[:-3]}")
+                        await ctx.reply("All extensions have been loaded.")
+            else:
+                await bot.load_extension(f"src.cogs.{extension}")
+                await ctx.reply(f"The extension {extension} has been loaded.")
+        except commands.ExtensionAlreadyLoaded:
+            await ctx.reply(f"The extension {extension} is already loaded.")
+        except commands.ExtensionNotFound:
+            await ctx.reply(f"The extension {extension} could not be found.")
+        except Exception:
+            await ctx.reply(f"There was a fatal error loading {extension}, "
+                            f"please check the bots logs.")
 
-        #Unloads an extention from the cogs folder
+    @bot.hybrid_command(name="unload_extension", with_app_command=True)
+    @app_commands.guilds(guild)
+    @commands.has_permissions(administrator=True)
+    async def unload_extension(ctx: commands.Context, extension="*") -> None:
+        """
+        Unloads all loaded or a specified extension.
 
-    @client.command()
-    @commands.has_role("NASA_Bot")
-    async def reload(ctx, extension):
-        client.unload_extension(f'cogs.{extension}')
-        client.load_extension(f'cogs.{extension}')
-    
-    async def load_extensions():
-        for filename in os.listdir("./cogs"):
-            if filename.endswith(".py"):
-                await client.load_extension(f"cogs.{filename[:-3]}")
-    
-    #Loads all of the cogs on bot startup
+        Args:
+            ctx (discord.ext.commands.Context): The context that the command
+                                                was invoked with.
+            extension (str): The extension that is to be unloaded. If none is
+                             specified then all extensions are unloaded.
+        """
+        try:
+            if extension == "*":
+                for filename in os.listdir("src/cogs"):
+                    if filename.endswith(".py") and "__init__" not in filename:
+                        await bot.unload_extension(f"src.cogs.{filename[:-3]}")
+                        await ctx.reply("All extensions have been unloaded.")
+            else:
+                await bot.unload_extension(f"src.cogs.{extension}")
+                await ctx.reply(f"The extension {extension} has been unloaded.")
+        except commands.ExtensionNotLoaded:
+            await ctx.reply(f"The extension {extension} is not loaded.")
+        except commands.ExtensionNotFound:
+            await ctx.reply(f"The extension {extension} could not be found.")
+        except Exception:
+            await ctx.reply(f"There was a fatal error loading {extension}, "
+                            f"please check the bots logs.")
 
-    conf_location = os.path.abspath('conf/config.yaml')
+    @bot.hybrid_command(name="reload_extension", with_app_command=True)
+    @app_commands.guilds(guild)
+    @commands.has_permissions(administrator=True)
+    async def reload_extension(ctx: commands.Context, extension="*") -> None:
+        """
+        Reloads all the extensions or a specified one.
 
-    #Locates the yaml config file
+        Args:
+            ctx (discord.ext.commands.Context): The context with which the
+                                                command has been invoked.
+            extension (str): The extension that is to be reloaded. If none is
+                             specified then all extensions are reloaded.
+        """
+        if extension == "*":
+            await unload_extension(ctx)
+            await load_extension(ctx)
+        else:
+            await unload_extension(ctx, extension=extension)
+            await load_extension(ctx, extension=extension)
 
-    TOKEN = yaml_parser(conf_location).parse_data('DISCORD_TOKEN')
+    @bot.hybrid_command(name="sync", with_app_command=True)
+    @app_commands.guilds(guild)
+    @commands.has_permissions(administrator=True)
+    async def sync(ctx: commands.Context) -> None:
+        """
+        Syncs the app commands (slash commands) to the bot.
 
-    #Loads the token that is used to connect to the discord bot
+        Args:
+            ctx (discord.ext.commands.Context): The context with which the
+                                                command was invoked.
+        """
+        synced = await bot.tree.sync(guild=guild)
+        if synced:
+            await ctx.channel.send("Slash commands have been synced.")
+        else:
+            await ctx.channel.send("Failed to sync the commands.")
 
-    async def main_thread():
-        async with client:
-            await load_extensions()
-            await client.start(TOKEN)
+    @bot.hybrid_command(name="core_reload", with_app_command=True)
+    @app_commands.guilds(guild)
+    @commands.has_permissions(administrator=True)
+    async def core_reload(ctx: commands.Context) -> None:
+        """
+        Fully restarts the bot.
 
-    asyncio.run(main_thread())
+        Args:
+            ctx (discord.ext.commands.Context): The context with which the
+                                                command was invoked.
+        """
+        await ctx.reply("The bot is being restarted.")
+        subprocess.call(["supervisorctl", "restart", "nasa_bot"])
 
-    #Starts the bot.
-
-#NASA_API syntax:   api('conf/config.yaml', 'APOD_URL').json_data('url')
-
+    bot.run(token)

@@ -1,5 +1,5 @@
-from nasa_api.api_request import ApiRequest
-from nasa_api.nasa_api_errors import NasaApiDataNotFoundError
+from src.nasa_api.api_request import ApiRequest
+from src.nasa_api.nasa_api_errors import NasaApiDataNotFoundError
 
 
 class Apod(ApiRequest):
@@ -17,7 +17,7 @@ class Apod(ApiRequest):
         super().__init__(endpoint)
 
     @property
-    def copyright(self):
+    def copyright(self) -> str:
         """
         Copy right info for the request.
 
@@ -26,7 +26,7 @@ class Apod(ApiRequest):
 
         Raises:
             NasaApiDataNotFoundError: Raised when the request does not have
-            copyright info.
+                                      copyright info.
         """
         try:
             return super().request_data["copyright"]
@@ -35,7 +35,7 @@ class Apod(ApiRequest):
                 "Request did not contain copyright info.")
 
     @property
-    def date(self):
+    def date(self) -> str:
         """
         The date that corresponds to the Astronomy Picture of the Day date.
 
@@ -44,7 +44,7 @@ class Apod(ApiRequest):
 
         Raises:
             NasaApiDataNotFoundError: Raised when the request does not have a
-            date.
+                                      date.
         """
         try:
             return super().request_data["date"]
@@ -52,7 +52,7 @@ class Apod(ApiRequest):
             raise NasaApiDataNotFoundError("Request did not contain a date.")
 
     @property
-    def explanation(self):
+    def explanation(self) -> str:
         """
         An explanation of the image/video that is in the request.
 
@@ -61,7 +61,7 @@ class Apod(ApiRequest):
 
         Raises:
             NasaApiDataNotFoundError: Raised when an explanation is not found
-            in the request.
+                                      in the request.
         """
         try:
             return super().request_data["explanation"]
@@ -70,7 +70,7 @@ class Apod(ApiRequest):
                 "Request did not contain an explanation.")
 
     @property
-    def media_type(self):
+    def media_type(self) -> str:
         """
         The type of media that the requests contains. Should be an image or
         video.
@@ -80,7 +80,7 @@ class Apod(ApiRequest):
 
         Raises:
             NasaApiDataNotFoundError: Raised when the request does not have a
-            media type.
+                                      media type.
         """
         try:
             return super().request_data["media_type"]
@@ -89,7 +89,7 @@ class Apod(ApiRequest):
                 "Request did not contain a media_type.")
 
     @property
-    def service_version(self):
+    def service_version(self) -> str:
         """
         The version of the system that provides the API.
 
@@ -98,7 +98,7 @@ class Apod(ApiRequest):
 
         Raises:
             NasaApiDataNotFoundError: Raised when a service version is not in
-            the response.
+                                      the response.
         """
         try:
             return super().request_data["service_version"]
@@ -107,7 +107,7 @@ class Apod(ApiRequest):
                                            "version.")
 
     @property
-    def title(self):
+    def title(self) -> str:
         """
         The title of the image/video in the request.
 
@@ -116,7 +116,7 @@ class Apod(ApiRequest):
 
         Raises:
             NasaApiDataNotFoundError: Raised when the request does not
-            contain a title.
+                                      contain a title.
         """
         try:
             return super().request_data["title"]
@@ -124,7 +124,7 @@ class Apod(ApiRequest):
             raise NasaApiDataNotFoundError("Request did not contain a title.")
 
     @property
-    def url(self):
+    def url(self) -> str:
         """
         The URL that points the image/video of the day.
 
@@ -133,7 +133,7 @@ class Apod(ApiRequest):
 
         Raises:
             NasaApiDataNotFoundError: Is raised when the request does not
-            contain a URL.
+                                      contain a URL.
         """
         try:
             return super().request_data["url"]
@@ -141,17 +141,17 @@ class Apod(ApiRequest):
             raise NasaApiDataNotFoundError("Request did not contain a url.")
 
     @property
-    def hdurl(self):
+    def hdurl(self) -> str:
         """
         The URL that links to an HD version of the image in the request.
 
         Returns:
             str: The URL that links to the HD version of the image in the
-            request.
+                 request.
 
         Raises:
             NasaApiDataNotFoundError: Is raised if the request does not
-            contain an HD URL (hdurl in request).
+                                      contain an HD URL (hdurl in request).
         """
         try:
             return super().request_data["hdurl"]

@@ -2,8 +2,8 @@ from unittest import TestCase
 
 import responses
 
-from nasa_api.apod import Apod
-from nasa_api.nasa_api_errors import NasaApiDataNotFoundError
+from src.nasa_api.apod import Apod
+from src.nasa_api.nasa_api_errors import NasaApiDataNotFoundError
 
 
 class TestApod(TestCase):
