@@ -16,7 +16,6 @@ if __name__ == "__main__":
     guild = discord.Object(config.get_unique_item("guild"))
     bot = commands.Bot(command_prefix=prefix, intents=intents)
 
-
     @bot.event
     async def on_ready() -> None:
         """
@@ -26,7 +25,6 @@ if __name__ == "__main__":
         for file in os.listdir("src/cogs"):
             if file.endswith(".py") and "__init__" not in file:
                 await bot.load_extension(f"src.cogs.{file[:-3]}")
-
 
     @bot.hybrid_command(name="list_extensions", with_app_command=True)
     @app_commands.guilds(guild)
@@ -51,7 +49,6 @@ if __name__ == "__main__":
             color=discord.Color.red()
         )
         await ctx.reply(embed=embed)
-
 
     @bot.hybrid_command(name="load_extension", with_app_command=True)
     @app_commands.guilds(guild)
@@ -84,7 +81,6 @@ if __name__ == "__main__":
             await ctx.reply(f"There was a fatal error loading {extension}, "
                             f"please check the bots logs.")
 
-
     @bot.hybrid_command(name="unload_extension", with_app_command=True)
     @app_commands.guilds(guild)
     @commands.has_permissions(administrator=True)
@@ -115,7 +111,6 @@ if __name__ == "__main__":
             await ctx.reply(f"There was a fatal error loading {extension}, "
                             f"please check the bots logs.")
 
-
     @bot.hybrid_command(name="reload_extension", with_app_command=True)
     @app_commands.guilds(guild)
     @commands.has_permissions(administrator=True)
@@ -136,7 +131,6 @@ if __name__ == "__main__":
             await unload_extension(ctx, extension=extension)
             await load_extension(ctx, extension=extension)
 
-
     @bot.hybrid_command(name="sync", with_app_command=True)
     @app_commands.guilds(guild)
     @commands.has_permissions(administrator=True)
@@ -154,7 +148,6 @@ if __name__ == "__main__":
         else:
             await ctx.channel.send("Failed to sync the commands.")
 
-
     @bot.hybrid_command(name="core_reload", with_app_command=True)
     @app_commands.guilds(guild)
     @commands.has_permissions(administrator=True)
@@ -167,8 +160,6 @@ if __name__ == "__main__":
                                                 command was invoked.
         """
         await ctx.reply("The bot is being restarted.")
-        subprocess.call(["bash", "./src/bootstrap_bot/bootstrap.bash"])
-        quit(0)
-
+        subprocess.call(["supervisorctl", "restart", "nasa_bot"])
 
     bot.run(token)
