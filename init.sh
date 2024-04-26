@@ -2,12 +2,17 @@
 
 # Used to set initial config values and start the bot.
 
-echo "The prefix is set to: $prefix";
-echo "The guild is set to: $guild";
-echo "The token is set to: $token";
+current_prefix=$(awk '/prefix/ {print $1}' conf/config.yaml);
+current_guild=$(awk '/guild/ {print $1}' conf/config.yaml);
+current_token=$(awk '/token/ {print $1}' conf/config.yaml);
 
-echo "prefix: \"$prefix\"" >> ./conf/config.yaml;
-echo "guild: \"$guild\"" >> ./conf/config.yaml;
-echo "token: \"$token\"" >> ./conf/config.yaml;
+if [ "$current_prefix" == "" ] && [ "$current_guild" == "" ] && [ "$current_token" == "" ]; then
+  echo "prefix: \"$prefix\"" >> ./conf/config.yaml;
+  echo "guild: \"$guild\"" >> ./conf/config.yaml;
+  echo "token: \"$token\"" >> ./conf/config.yaml;
+  echo "Set up has completed!";
+else
+  echo "Config already set, skipping setup...";
+fi
 
-/usr/bin/supervisord
+/usr/bin/supervisord;
