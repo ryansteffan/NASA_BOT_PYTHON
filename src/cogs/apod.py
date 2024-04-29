@@ -12,8 +12,8 @@ from src.utils import Config
 class APOD(commands.GroupCog, name="apod"):
     # Creates the time object for the daily post.
     time = datetime.time(
-        hour=Config().get_unique_item("hour"),
-        minute=Config().get_unique_item("minute"),
+        hour=int(Config().get_unique_item("hour")),
+        minute=int(Config().get_unique_item("minute")),
         tzinfo=datetime.timezone.utc
     )
 
@@ -29,10 +29,6 @@ class APOD(commands.GroupCog, name="apod"):
         self.bot = bot
         self.channel = config.get_unique_item("apod_channel")
         self.endpoint = config.get_unique_item("apod_url")
-        self.post_hour = config.get_unique_item("hour")
-        self.post_minute = config.get_unique_item("minute")
-        self.post_time = datetime.time(hour=self.post_hour,
-                                       minute=self.post_minute)
         self.post_daily_image.start()
 
     @app_commands.command(name="daily_image",
@@ -71,7 +67,6 @@ class APOD(commands.GroupCog, name="apod"):
         """
         Post the APOD daily to discord.
         """
-        print("posted...")
         channel = self.bot.get_channel(int(self.channel))
         apod = Apod(self.endpoint)
         if apod.is_video():
@@ -102,4 +97,11 @@ async def setup(bot: commands.Bot):
     Args:
         bot (commands.Bot): The bot to add the commands to.
     """
+    config = Config()
+    hour = int(config.get_unique_item("hour"))
+    minute = int(config.get_unique_item("minute"))
+    if hour < 0 or hour > 23:
+        raise ValueError("The hour setting has been set to an invalid value.")
+    if minute < 0 or minute > 59:
+        raise ValueError("The minute setting has been set to an invalid value.")
     await bot.add_cog(APOD(bot), guilds=bot.guilds)

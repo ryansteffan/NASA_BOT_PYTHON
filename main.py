@@ -11,8 +11,8 @@ if __name__ == "__main__":
     # Sets up the initial state of the discord bot.
     config = Config()
     intents = discord.Intents.all()
-    prefix = config.get_unique_item("prefix")
-    token = config.get_unique_item("token")
+    prefix = str(config.get_unique_item("prefix"))
+    token = str(config.get_unique_item("token"))
     guild = discord.Object(config.get_unique_item("guild"))
     bot = commands.Bot(command_prefix=prefix, intents=intents)
 
