@@ -10,6 +10,7 @@ from src.utils import Config
 if __name__ == "__main__":
     # Sets up the initial state of the discord bot.
     config = Config()
+    # TODO: Get the needed logger.
     intents = discord.Intents.all()
     prefix = str(config.get_unique_item("prefix"))
     token = str(config.get_unique_item("token"))

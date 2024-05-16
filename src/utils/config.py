@@ -9,7 +9,7 @@ class Config:
     Represents a config file and it's contents
     """
 
-    def __init__(self, path: str = "./conf/config.yaml") -> None:
+    def __init__(self, path: str = "./conf/bot_config.yaml") -> None:
         """
         Creates an instance of the Config class.
 
@@ -123,7 +123,6 @@ class Config:
 
         Returns:
             str | int | float | list | dict: The value of the specified item.
-
         """
         queue = deque([self.config_data])
 
