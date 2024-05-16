@@ -1,3 +1,0 @@
-# Config
-
-::: src.utils.Config
