@@ -1,13 +1,12 @@
-import logging.config
 import os
 import subprocess
 
 import discord
-import yaml
 from discord import app_commands
 from discord.ext import commands
 
 from src.utils import Config
+from src.utils import nasa_bot_logger
 
 if __name__ == "__main__":
     # Sets up the initial state of the discord bot.
@@ -18,11 +17,12 @@ if __name__ == "__main__":
     guild = discord.Object(config.get_unique_item("guild"))
     bot = commands.Bot(command_prefix=prefix, intents=intents)
 
-    with open("conf/logging_config.yaml", "r") as logging_config:
-        logging_config_data = yaml.safe_load(logging_config)
-        logging.config.dictConfig(logging_config_data)
 
-    nasa_bot_logger = logging.getLogger("nasa_bot")
+    # with open("conf/logging_config.yaml", "r") as logging_config:
+    #     logging_config_data = yaml.safe_load(logging_config)
+    #     logging.config.dictConfig(logging_config_data)
+    #
+    # nasa_bot_logger = logging.getLogger("nasa_bot")
 
     @bot.event
     async def on_ready() -> None:
