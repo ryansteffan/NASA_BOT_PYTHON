@@ -2,7 +2,9 @@ FROM python:latest
 
 WORKDIR /bot
 
-RUN mkdir -p /var/log/supervisor
+RUN mkdir -p /var/log/supervisor && mkdir -p /bot/logs
+
+RUN touch /bot/logs/nasa_bot.log
 
 COPY ./conf /bot/conf
 
