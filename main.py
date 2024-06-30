@@ -11,10 +11,10 @@ from src.utils import nasa_bot_logger
 if __name__ == "__main__":
     # Sets up the initial state of the discord bot.
     config = Config()
-    intents = discord.Intents.all()
     prefix = str(config.get_unique_item("prefix"))
     token = str(config.get_unique_item("token"))
     guild = discord.Object(config.get_unique_item("guild"))
+    intents = discord.Intents.all()
     bot = commands.Bot(command_prefix=prefix, intents=intents)
 
     @bot.event
@@ -52,7 +52,10 @@ if __name__ == "__main__":
             description=description,
             color=discord.Color.red()
         )
-        await ctx.reply(embed=embed)
+        try:
+            await ctx.reply(embed=embed)
+        except Exception as e:
+            nasa_bot_logger.exception(e)
 
     @bot.hybrid_command(name="load_extension", with_app_command=True)
     @app_commands.guilds(guild)
@@ -156,12 +159,15 @@ if __name__ == "__main__":
             ctx (discord.ext.commands.Context): The context with which the
                                                 command was invoked.
         """
-        synced = await bot.tree.sync(guild=guild)
-        if synced:
-            await ctx.channel.send("Slash commands have been synced.")
-        else:
-            nasa_bot_logger.error("Failed to sync app commands.")
-            await ctx.channel.send("Failed to sync the commands.")
+        try:
+            synced = await bot.tree.sync(guild=guild)
+            if synced:
+                await ctx.channel.send("Slash commands have been synced.")
+            else:
+                nasa_bot_logger.error("Failed to sync app commands.")
+                await ctx.channel.send("Failed to sync the commands.")
+        except Exception as e:
+            nasa_bot_logger.exception(e)
 
     @bot.hybrid_command(name="core_reload", with_app_command=True)
     @app_commands.guilds(guild)
@@ -174,8 +180,13 @@ if __name__ == "__main__":
             ctx (discord.ext.commands.Context): The context with which the
                                                 command was invoked.
         """
-        nasa_bot_logger.info("Bot is being rebooted...")
-        await ctx.reply("The bot is being restarted.")
-        subprocess.call(["supervisorctl", "restart", "nasa_bot"])
+        try:
+            nasa_bot_logger.info("Bot is being rebooted...")
+            await ctx.reply("The bot is being restarted.")
+            subprocess.call(["supervisorctl", "restart", "nasa_bot"])
+        except Exception as e:
+            nasa_bot_logger.critical("There was an error when trying to "
+                                     "reboot!")
+            nasa_bot_logger.exception(e)
 
     bot.run(token)
