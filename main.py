@@ -82,12 +82,17 @@ if __name__ == "__main__":
                 await ctx.reply("All extensions have been loaded.")
             else:
                 await bot.load_extension(f"src.cogs.{extension}")
-                await ctx.reply(f"The extension {extension} has been loaded.")
+                message = f"The extension {extension} has been loaded."
+                nasa_bot_logger.info(message)
+                await ctx.reply(message)
         except commands.ExtensionAlreadyLoaded:
-            await ctx.reply(f"The extension {extension} is already loaded.")
-        except commands.ExtensionNotFound as exception:
-            nasa_bot_logger.warning(exception)
-            await ctx.reply(f"The extension {extension} could not be found.")
+            message = f"The extension {extension} is already loaded."
+            nasa_bot_logger.info(message)
+            await ctx.reply(message)
+        except commands.ExtensionNotFound:
+            message = f"The extension {extension} could not be found."
+            nasa_bot_logger.warning(message)
+            await ctx.reply(message)
         except Exception as exception:
             nasa_bot_logger.error(exception)
             await ctx.reply(f"There was a fatal error loading {extension}, "
@@ -111,18 +116,23 @@ if __name__ == "__main__":
                 for filename in os.listdir("src/cogs"):
                     if filename.endswith(".py") and "__init__" not in filename:
                         extension_file = filename[:-3]
+                        await bot.unload_extension(f"src.cogs.{extension_file}")
                         nasa_bot_logger.info(f"Extension {extension_file} "
                                              f"unload successful...")
-                        await bot.unload_extension(f"src.cogs.{extension_file}")
                 await ctx.reply("All extensions have been unloaded.")
             else:
                 await bot.unload_extension(f"src.cogs.{extension}")
-                await ctx.reply(f"The extension {extension} has been unloaded.")
+                message = f"The extension {extension} has been unloaded."
+                await ctx.reply(message)
+                nasa_bot_logger.info(message)
         except commands.ExtensionNotLoaded:
-            await ctx.reply(f"The extension {extension} is not loaded.")
-        except commands.ExtensionNotFound as exception:
-            nasa_bot_logger.warning(exception)
-            await ctx.reply(f"The extension {extension} could not be found.")
+            message = f"The extension {extension} is not loaded."
+            await ctx.reply(message)
+            nasa_bot_logger.info(message)
+        except commands.ExtensionNotFound:
+            message = f"The extension {extension} could not be found."
+            await ctx.reply(message)
+            nasa_bot_logger.warning(message)
         except Exception as exception:
             nasa_bot_logger.error(exception)
             await ctx.reply(f"There was a fatal error loading {extension}, "
