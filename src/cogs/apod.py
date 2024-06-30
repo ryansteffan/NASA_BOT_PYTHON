@@ -7,6 +7,7 @@ from discord.ext import tasks
 
 from src.nasa_api import Apod, nasa_api_errors
 from src.utils import Config
+from src.utils.nasa_bot_logger import nasa_bot_logger
 
 
 class APOD(commands.GroupCog, name="apod"):
@@ -25,11 +26,14 @@ class APOD(commands.GroupCog, name="apod"):
             bot (discord.ext.commands.Bot): The bot that the cog is being
             added to.
         """
-        config = Config()
-        self.bot = bot
-        self.channel = config.get_unique_item("apod_channel")
-        self.endpoint = config.get_unique_item("apod_url")
+        try:
+            config = Config()
+            self.channel = config.get_unique_item("apod_channel")
+            self.endpoint = config.get_unique_item("apod_url")
+        except Exception as e:
+            nasa_bot_logger.exception(e)
         self.post_daily_image.start()
+        self.bot = bot
 
     @app_commands.command(name="daily_image",
                           description="Posts the Astronomy picture of the day.")
@@ -43,7 +47,10 @@ class APOD(commands.GroupCog, name="apod"):
         """
         apod = Apod(self.endpoint)
         if apod.is_video():
-            await interaction.response.send_message(apod.url)
+            try:
+                await interaction.response.send_message(apod.url)
+            except Exception as e:
+                nasa_bot_logger.exception(e)
         else:
             image_description = apod.explanation
             image_url = apod.url
@@ -60,7 +67,10 @@ class APOD(commands.GroupCog, name="apod"):
             )
             embed.set_image(url=image_url)
             embed.set_footer(text=copyright)
-            await interaction.response.send_message(embed=embed)
+            try:
+                await interaction.response.send_message(embed=embed)
+            except Exception as e:
+                nasa_bot_logger.exception(e)
 
     @tasks.loop(time=time)
     async def post_daily_image(self) -> None:
@@ -70,7 +80,10 @@ class APOD(commands.GroupCog, name="apod"):
         channel = self.bot.get_channel(int(self.channel))
         apod = Apod(self.endpoint)
         if apod.is_video():
-            await channel.send(apod.url)
+            try:
+                await channel.send(apod.url)
+            except Exception as e:
+                nasa_bot_logger.exception(e)
         else:
             image_description = apod.explanation
             image_url = apod.url
@@ -87,8 +100,10 @@ class APOD(commands.GroupCog, name="apod"):
             )
             embed.set_image(url=image_url)
             embed.set_footer(text=copyright)
-            await channel.send(embed=embed)
-
+            try:
+                await channel.send(embed=embed)
+            except Exception as e:
+                nasa_bot_logger.exception(e)
 
 async def setup(bot: commands.Bot):
     """
@@ -97,11 +112,19 @@ async def setup(bot: commands.Bot):
     Args:
         bot (commands.Bot): The bot to add the commands to.
     """
-    config = Config()
-    hour = int(config.get_unique_item("hour"))
-    minute = int(config.get_unique_item("minute"))
-    if hour < 0 or hour > 23:
-        raise ValueError("The hour setting has been set to an invalid value.")
-    if minute < 0 or minute > 59:
-        raise ValueError("The minute setting has been set to an invalid value.")
-    await bot.add_cog(APOD(bot), guilds=bot.guilds)
+    try:
+        config = Config()
+        hour = int(config.get_unique_item("hour"))
+        minute = int(config.get_unique_item("minute"))
+        if hour < 0 or hour > 23:
+            raise ValueError("The hour setting has been set to an invalid "
+                             "value.")
+        if minute < 0 or minute > 59:
+            raise ValueError("The minute setting has been set to an invalid "
+                             "value.")
+    except Exception as e:
+        nasa_bot_logger.exception(e)
+    try:
+        await bot.add_cog(APOD(bot), guilds=bot.guilds)
+    except Exception as e:
+        nasa_bot_logger.exception(e)

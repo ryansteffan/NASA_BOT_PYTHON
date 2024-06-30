@@ -5,6 +5,7 @@ from discord import app_commands
 from discord.ext import commands
 
 from src.utils.config import Config
+from src.utils.nasa_bot_logger import nasa_bot_logger
 
 
 class Settings(commands.GroupCog, name="setting"):
@@ -44,38 +45,42 @@ class Settings(commands.GroupCog, name="setting"):
             interaction (discord.Interaction): Represents the interaction
                                                with discord.
         """
-        config = Config()
-        config_items = config.config_data.items()
-        bot_name = self.bot.user
-        tab = " -----> "
-        protected = [
-            "token",
-            "bot_token",
-            "bot_key",
-            "api",
-            "api_token",
-            "api_key",
-            "key",
-            "password",
-            "passkey",
-            "pass"
-        ]
-        embed = discord.Embed(
-            title=f"{bot_name} Settings:",
-            color=discord.Color.red()
-        )
+        try:
+            config = Config()
+            config_items = config.config_data.items()
+            bot_name = self.bot.user
+            tab = " -----> "
+            protected = [
+                "token",
+                "bot_token",
+                "bot_key",
+                "api",
+                "api_token",
+                "api_key",
+                "key",
+                "password",
+                "passkey",
+                "pass"
+            ]
+            embed = discord.Embed(
+                title=f"{bot_name} Settings:",
+                color=discord.Color.red()
+            )
 
-        for keys, values in config_items:
-            keys = str(keys)
-            values = str(values)
-            if keys.strip() in protected:
-                embed.add_field(name=keys + tab + "*\*\*\*\*", value="",
-                                inline=False)
-            else:
-                embed.add_field(name=keys + tab + values, value="",
-                                inline=False)
+            for keys, values in config_items:
+                keys = str(keys)
+                values = str(values)
+                if keys.strip() in protected:
+                    embed.add_field(name=keys + tab + "*\*\*\*\*", value="",
+                                    inline=False)
+                else:
+                    embed.add_field(name=keys + tab + values, value="",
+                                    inline=False)
 
-        await interaction.response.send_message(embed=embed)
+            await interaction.response.send_message(embed=embed)
+        except Exception as e:
+            nasa_bot_logger.exception(e)
+
 
     @app_commands.command(
         name="set",
@@ -95,10 +100,10 @@ class Settings(commands.GroupCog, name="setting"):
             setting (str): The setting that is being changed.
             new_value (str): The new value for the setting.
         """
-        config = Config()
-        setting = str(setting).strip()
-        new_value = str(new_value).strip()
         try:
+            config = Config()
+            setting = str(setting).strip()
+            new_value = str(new_value).strip()
             previous_value = config.get_unique_item(setting)
             self.reset_history()
             self.history.append({setting: [previous_value, new_value]})
@@ -119,6 +124,10 @@ class Settings(commands.GroupCog, name="setting"):
         except AttributeError:
             await interaction.response.send_message("The setting selected "
                                                     "does not exist.")
+            nasa_bot_logger.info("A non existent setting was attempted to be "
+                                 "changed.")
+        except Exception as e:
+            nasa_bot_logger.exception(e)
 
     @app_commands.command(
         name="unset",
@@ -136,9 +145,9 @@ class Settings(commands.GroupCog, name="setting"):
                                                with discord.
             setting (str): The setting to "unset".
         """
-        config = Config()
-        setting = str(setting).strip()
         try:
+            config = Config()
+            setting = str(setting).strip()
             previous_value = config.get_unique_item(setting)
             self.reset_history()
             self.history.append({setting: [previous_value, "unset"]})
@@ -159,6 +168,10 @@ class Settings(commands.GroupCog, name="setting"):
         except AttributeError:
             await interaction.response.send_message("The setting selected "
                                                     "does not exist.")
+            nasa_bot_logger.info("A non existent setting was attempted to be "
+                                 "unset.")
+        except Exception as e:
+            nasa_bot_logger.exception(e)
 
     @app_commands.command(
         name="view_history",
@@ -175,6 +188,7 @@ class Settings(commands.GroupCog, name="setting"):
                                                with discord.
         """
         setting_index = 0
+        max_history_length = 6
         embed = discord.Embed(
             title="Recent Changes:",
             color=discord.Color.red(),
@@ -182,15 +196,17 @@ class Settings(commands.GroupCog, name="setting"):
             timestamp=datetime.datetime.now()
         )
         for setting in self.history:
-            if setting_index < 6:
+            if setting_index < max_history_length:
                 for key, value in setting.items():
                     embed.add_field(name=f"{setting_index}. {key}",
                                     value=f"Old Value: {value[0]} ----> New "
                                           f"Value: {value[1]}",
                                     inline=False)
                     setting_index += 1
-
-        await interaction.response.send_message(embed=embed)
+        try:
+            await interaction.response.send_message(embed=embed)
+        except Exception as e:
+            nasa_bot_logger.exception(e)
 
     @app_commands.command(
         name="restore",
@@ -209,8 +225,8 @@ class Settings(commands.GroupCog, name="setting"):
                                                with discord.
             change (int): The number of the change that is to be reverted.
         """
-        config = Config()
         try:
+            config = Config()
             change = self.history[change]
             for key, value in change.items():
                 config.update_unique_item(key, value[0])
@@ -219,8 +235,10 @@ class Settings(commands.GroupCog, name="setting"):
             await interaction.response.send_message(f"Change #{change} "
                                                     f"has be reset.")
         except IndexError:
-            await interaction.response.send_message(
-                "The change selected does not exist.")
+            await interaction.response.send_message("The change selected does "
+                                                    "not exist.")
+        except Exception as e:
+            nasa_bot_logger.exception(e)
 
 
 async def setup(bot: commands.Bot):
@@ -230,4 +248,7 @@ async def setup(bot: commands.Bot):
     Args:
         bot (commands.Bot): The bot to add the commands to.
     """
-    await bot.add_cog(Settings(bot), guilds=bot.guilds)
+    try:
+        await bot.add_cog(Settings(bot), guilds=bot.guilds)
+    except Exception as e:
+        nasa_bot_logger.exception(e)

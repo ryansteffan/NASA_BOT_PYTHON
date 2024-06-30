@@ -6,14 +6,15 @@ from discord import app_commands
 from discord.ext import commands
 
 from src.utils import Config
+from src.utils import nasa_bot_logger
 
 if __name__ == "__main__":
     # Sets up the initial state of the discord bot.
     config = Config()
-    intents = discord.Intents.all()
     prefix = str(config.get_unique_item("prefix"))
     token = str(config.get_unique_item("token"))
     guild = discord.Object(config.get_unique_item("guild"))
+    intents = discord.Intents.all()
     bot = commands.Bot(command_prefix=prefix, intents=intents)
 
     @bot.event
@@ -21,10 +22,13 @@ if __name__ == "__main__":
         """
         Prints bot start status and then loads all extensions if set.
         """
-        print(f"The bot has started... ")
+        nasa_bot_logger.info("The bot has started...")
         for file in os.listdir("src/cogs"):
             if file.endswith(".py") and "__init__" not in file:
-                await bot.load_extension(f"src.cogs.{file[:-3]}")
+                extension_file = file[:-3]
+                await bot.load_extension(f"src.cogs.{extension_file}")
+                nasa_bot_logger.info(f"Extension {extension_file} load "
+                                     f"successful...")
 
     @bot.hybrid_command(name="list_extensions", with_app_command=True)
     @app_commands.guilds(guild)
@@ -48,7 +52,10 @@ if __name__ == "__main__":
             description=description,
             color=discord.Color.red()
         )
-        await ctx.reply(embed=embed)
+        try:
+            await ctx.reply(embed=embed)
+        except Exception as e:
+            nasa_bot_logger.exception(e)
 
     @bot.hybrid_command(name="load_extension", with_app_command=True)
     @app_commands.guilds(guild)
@@ -68,16 +75,26 @@ if __name__ == "__main__":
             if extension == "*":
                 for filename in os.listdir("src/cogs"):
                     if filename.endswith(".py") and "__init__" not in filename:
-                        await bot.load_extension(f"src.cogs.{filename[:-3]}")
-                        await ctx.reply("All extensions have been loaded.")
+                        extension_file = filename[:-3]
+                        await bot.load_extension(f"src.cogs.{extension_file}")
+                        nasa_bot_logger.info(f"Extension {extension_file} "
+                                             f"load successful...")
+                await ctx.reply("All extensions have been loaded.")
             else:
                 await bot.load_extension(f"src.cogs.{extension}")
-                await ctx.reply(f"The extension {extension} has been loaded.")
+                message = f"The extension {extension} has been loaded."
+                nasa_bot_logger.info(message)
+                await ctx.reply(message)
         except commands.ExtensionAlreadyLoaded:
-            await ctx.reply(f"The extension {extension} is already loaded.")
+            message = f"The extension {extension} is already loaded."
+            nasa_bot_logger.info(message)
+            await ctx.reply(message)
         except commands.ExtensionNotFound:
-            await ctx.reply(f"The extension {extension} could not be found.")
-        except Exception:
+            message = f"The extension {extension} could not be found."
+            nasa_bot_logger.warning(message)
+            await ctx.reply(message)
+        except Exception as exception:
+            nasa_bot_logger.error(exception)
             await ctx.reply(f"There was a fatal error loading {extension}, "
                             f"please check the bots logs.")
 
@@ -98,16 +115,26 @@ if __name__ == "__main__":
             if extension == "*":
                 for filename in os.listdir("src/cogs"):
                     if filename.endswith(".py") and "__init__" not in filename:
-                        await bot.unload_extension(f"src.cogs.{filename[:-3]}")
-                        await ctx.reply("All extensions have been unloaded.")
+                        extension_file = filename[:-3]
+                        await bot.unload_extension(f"src.cogs.{extension_file}")
+                        nasa_bot_logger.info(f"Extension {extension_file} "
+                                             f"unload successful...")
+                await ctx.reply("All extensions have been unloaded.")
             else:
                 await bot.unload_extension(f"src.cogs.{extension}")
-                await ctx.reply(f"The extension {extension} has been unloaded.")
+                message = f"The extension {extension} has been unloaded."
+                await ctx.reply(message)
+                nasa_bot_logger.info(message)
         except commands.ExtensionNotLoaded:
-            await ctx.reply(f"The extension {extension} is not loaded.")
+            message = f"The extension {extension} is not loaded."
+            await ctx.reply(message)
+            nasa_bot_logger.info(message)
         except commands.ExtensionNotFound:
-            await ctx.reply(f"The extension {extension} could not be found.")
-        except Exception:
+            message = f"The extension {extension} could not be found."
+            await ctx.reply(message)
+            nasa_bot_logger.warning(message)
+        except Exception as exception:
+            nasa_bot_logger.error(exception)
             await ctx.reply(f"There was a fatal error loading {extension}, "
                             f"please check the bots logs.")
 
@@ -142,11 +169,15 @@ if __name__ == "__main__":
             ctx (discord.ext.commands.Context): The context with which the
                                                 command was invoked.
         """
-        synced = await bot.tree.sync(guild=guild)
-        if synced:
-            await ctx.channel.send("Slash commands have been synced.")
-        else:
-            await ctx.channel.send("Failed to sync the commands.")
+        try:
+            synced = await bot.tree.sync(guild=guild)
+            if synced:
+                await ctx.channel.send("Slash commands have been synced.")
+            else:
+                nasa_bot_logger.error("Failed to sync app commands.")
+                await ctx.channel.send("Failed to sync the commands.")
+        except Exception as e:
+            nasa_bot_logger.exception(e)
 
     @bot.hybrid_command(name="core_reload", with_app_command=True)
     @app_commands.guilds(guild)
@@ -159,7 +190,13 @@ if __name__ == "__main__":
             ctx (discord.ext.commands.Context): The context with which the
                                                 command was invoked.
         """
-        await ctx.reply("The bot is being restarted.")
-        subprocess.call(["supervisorctl", "restart", "nasa_bot"])
+        try:
+            nasa_bot_logger.info("Bot is being rebooted...")
+            await ctx.reply("The bot is being restarted.")
+            subprocess.call(["supervisorctl", "restart", "nasa_bot"])
+        except Exception as e:
+            nasa_bot_logger.critical("There was an error when trying to "
+                                     "reboot!")
+            nasa_bot_logger.exception(e)
 
     bot.run(token)

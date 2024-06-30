@@ -2,6 +2,8 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+from src.utils.nasa_bot_logger import nasa_bot_logger
+
 
 class Ping(commands.Cog):
 
@@ -30,9 +32,11 @@ class Ping(commands.Cog):
         """
         message = "Pong..."
         if show_latency:
-            message = f"Pong... {round(self.bot.latency, 2) * 1000}ms"
-        await interaction.response.send_message(message)
-
+            message = f"Pong... {round(self.bot.latency, 4) * 1000}ms"
+        try:
+            await interaction.response.send_message(message)
+        except Exception as e:
+            nasa_bot_logger.exception(e)
 
 async def setup(bot: commands.Bot) -> None:
     """
@@ -41,4 +45,7 @@ async def setup(bot: commands.Bot) -> None:
     Args:
         bot (commands.Bot): The bot to add the commands to.
     """
-    await bot.add_cog(Ping(bot), guilds=bot.guilds)
+    try:
+        await bot.add_cog(Ping(bot), guilds=bot.guilds)
+    except Exception as e:
+        nasa_bot_logger.exception(e)

@@ -9,7 +9,7 @@ class Config:
     Represents a config file and it's contents
     """
 
-    def __init__(self, path: str = "./conf/config.yaml") -> None:
+    def __init__(self, path: str = "./conf/bot_config.yaml") -> None:
         """
         Creates an instance of the Config class.
 
@@ -121,9 +121,12 @@ class Config:
             section_name (str): The section that the item is in.
             index (str): The item that is being looked for in the config.
 
+        Raises:
+            AttributeError: Is raised when the specified value is not in the
+                            config file.
+
         Returns:
             str | int | float | list | dict: The value of the specified item.
-
         """
         queue = deque([self.config_data])
 
