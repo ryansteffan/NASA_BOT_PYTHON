@@ -17,13 +17,6 @@ if __name__ == "__main__":
     guild = discord.Object(config.get_unique_item("guild"))
     bot = commands.Bot(command_prefix=prefix, intents=intents)
 
-
-    # with open("conf/logging_config.yaml", "r") as logging_config:
-    #     logging_config_data = yaml.safe_load(logging_config)
-    #     logging.config.dictConfig(logging_config_data)
-    #
-    # nasa_bot_logger = logging.getLogger("nasa_bot")
-
     @bot.event
     async def on_ready() -> None:
         """
