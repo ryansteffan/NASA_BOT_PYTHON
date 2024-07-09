@@ -29,6 +29,6 @@ If you have found an issue with the bot, the best way to report it
 is by creating an issue on the
 [NASA_Bot_Python Github Page](https://github.com/TheTurnnip/NASA_BOT_PYTHON).
 
-If the issue is a Security flaw please reach out to me directly about the issue,
-I can be reached at:
+If the issue is a Security flaw please report it using the GitHub private vulnerability
+reporting, or you may reach out to me directly at: <br>
 <ryan.steffanbiz@gmail.com>

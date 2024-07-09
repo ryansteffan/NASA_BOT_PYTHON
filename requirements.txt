@@ -3,3 +3,7 @@ requests~=2.32.2
 responses~=0.25.0
 setuptools~=68.2.0
 discord.py~=2.3.2
+mkdocs
+mkdocs-material
+mkdocstrings
+mkdocstrings-python
