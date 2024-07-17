@@ -48,7 +48,7 @@ markdown_extensions:
   - pymdownx.superfences
 
 nav:
-  - index.md
+  - README.md
   - Quick Start Guide: quick-start-guide.md
   - How To Guides: how-to-guides.md
   - Config Reference: config-reference.md
