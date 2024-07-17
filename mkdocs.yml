@@ -5,38 +5,70 @@ repo_name: TheTurnnip/NASA_BOT_PYTHON
 
 theme:
   name: "material"
+  features:
+    - content.code.copy
+    - content.code.select
   palette:
-    # Light Mode
-    - scheme: default
-      toggle:
-        icon: material/weather-night
-        name: Switch to dark mode
 
-    # Dark Mode
-    - scheme: slate
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
       toggle:
-        icon: material/weather-sunny
+        icon: material/brightness-auto
         name: Switch to light mode
 
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
 
 plugins:
   - mkdocstrings
   - search
 
+markdown_extensions:
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+
 nav:
   - index.md
-  - Quick Start Guide: tutorials.md
+  - Quick Start Guide: quick-start-guide.md
   - How To Guides: how-to-guides.md
+  - Config Reference: config-reference.md
+  - Command Reference: command-reference.md
   - API Reference:
       - Reference: reference/reference_index.md
+      - cogs:
+          - Package Details: reference/cogs/cogs.md
+          - Ping: reference/cogs/ping.md
+          - APOD: reference/cogs/apod.md
+          - Settings: reference/cogs/settings.md
       - nasa_api:
           - Package Details: reference/nasa_api/nasa_api.md
-          - Apirequest: reference/nasa_api/api_request.md
-          - reference/nasa_api/apod.md
+          - ApiRequest: reference/nasa_api/api_request.md
+          - Apod: reference/nasa_api/apod.md
           - Exceptions: reference/nasa_api/nasa_api_errors.md
       - utils:
           - Package Details: reference/utils/utils.md
           - Config: reference/utils/config.md
+          - nasa_bot_logger: reference/utils/nasa_bot_logger.md
   - About: about.md
 
 extra:

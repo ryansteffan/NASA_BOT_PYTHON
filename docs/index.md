@@ -3,21 +3,21 @@
 NASA_Bot_Python is a simple, extensible discord bot with a focus on stability and
 functionality. It is written using python and discord.py.
 
-### This site contains documentation for:
+## Main Features:
 
-- The [NASA_Bot_Python](reference/reference_index.md) itself
-- The modules that it uses:
-    - [nasa_api](reference/nasa_api/nasa_api.md)
-    - [utils](reference/utils/utils.md)
-- How to extend the bot using [cogs]()
+* Posts NASA APOD (Astronomy Picture of the Day) on a daily basis.
+* Allows for easy deployment with docker.
+* Contains easy to use utils, and guidance on extending the bot using python.
 
 ## To Get Started...
 
-Just want to run the bot? Take a look at the [Quick-Start-Guide]().
+Just want to run the bot? Take a look at the [Quick-Start-Guide](quick-start-guide.md).
 
-For more in-depth guidance, it is best to refer to the [How-To-Guides]().
+For more in-depth guidance, it is best to refer to the [How-To-Guides](how-to-guides.md).
 
-Feel free to visit the Q&A as well, it can be found [here]().
+For a reference guide to the config options, check the [Config Reference](config-reference.md).
+
+For a reference guide to using the bots various commands, check out the [Command_Reference](command-reference.md).
 
 ## API Reference
 
@@ -32,3 +32,7 @@ is by creating an issue on the
 If the issue is a Security flaw please report it using the GitHub private vulnerability
 reporting, or you may reach out to me directly at: <br>
 <ryan.steffanbiz@gmail.com>
+
+## Licence Details:
+
+The licence details can be found [here](about.md).

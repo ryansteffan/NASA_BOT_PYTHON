@@ -1,0 +1,3 @@
+# Settings
+
+::: src.cogs.Settings
