@@ -24,7 +24,7 @@ class APOD(commands.GroupCog, name="apod"):
 
         Args:
             bot (discord.ext.commands.Bot): The bot that the cog is being
-            added to.
+                                            added to.
         """
         try:
             config = Config()
