@@ -34,7 +34,6 @@ jobs:
           images: |
             ryansteffan/nasa_bot
           tags: |
-            type=ref,event=branch
             type=semver,pattern={{version}}
             type=raw,value=latest
       -
