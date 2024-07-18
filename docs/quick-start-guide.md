@@ -157,14 +157,16 @@ Now that the bot has been installed, a few tweaks need to be made in discord.
 Here is a quick list of things to do:
 
 1. Sync the app commands. By default, you will not have slash commands because they must sync.
-   Refer to the /sync command for guidance.
-2. Set the channel for nasa_bot to post images in. Refer to the /setting command.
-3. Set the time to post the image at (Time is in 24 hour format, and the timezone is UTC).
-   Refer to the /setting command for this aswell.
+   Refer to the [/sync](command-reference.md#sync) command for guidance.
+2. Set the channel for nasa_bot to post images in. Refer to
+   the [/setting](command-reference.md#setting-set-setting-new_value) command.
+3. Set the time to post the image at (Time is in 24-hour format, and the timezone is UTC).
+   Refer to the [/setting](command-reference.md#setting-set-setting-new_value) command for this as well.
 4. I suggest that you get an API token from NASA's open api if you wish to use the bot extensively,
    as the demo key is great to get the bot up and running, but NASA suggests users use a normal key.
    Below are instructions on how to change the key.
-5. Use the /reload_extension command (with no optional parameters) to reload all the extensions.
+5. Use the [/reload_extension](command-reference.md#reload_extension-extension) command
+   (with no optional parameters) to reload all the extensions.
 
 #### Changing the NASA api key:
 
@@ -177,5 +179,5 @@ Ex. Instead of `https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY` you could 
 
 Now reload the extensions and test if the api key works with the /apod_daily command.
 
-If the command does not work, you are going to want to roll back the changes. Take a look at the /setting restore
-command.
+If the command does not work, you are going to want to roll back the changes. Take a look at the
+[/setting restore](command-reference.md#setting-restore-change_number) command.
