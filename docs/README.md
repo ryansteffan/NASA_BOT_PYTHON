@@ -3,7 +3,7 @@
 NASA_Bot_Python is a simple, extensible discord bot with a focus on stability and
 functionality. It is written using python and discord.py.
 
-## Main Features:
+## Main Features
 
 * Posts NASA APOD (Astronomy Picture of the Day) on a daily basis.
 * Allows for easy deployment with docker.
@@ -33,6 +33,6 @@ If the issue is a Security flaw please report it using the GitHub private vulner
 reporting, or you may reach out to me directly at: <br>
 <ryan.steffanbiz@gmail.com>
 
-## Licence Details:
+## Licence Details
 
 The licence details can be found [here](about.md).
