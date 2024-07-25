@@ -1,7 +1,6 @@
 PyYAML~=6.0.1
 requests~=2.32.2
 responses~=0.25.0
-setuptools~=70.3.0
 discord.py~=2.3.2
 mkdocs
 mkdocs-material
