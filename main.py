@@ -179,6 +179,24 @@ if __name__ == "__main__":
         except Exception as e:
             nasa_bot_logger.exception(e)
 
+
+    @bot.hybrid_command(name="version", with_app_command=True)
+    @app_commands.guilds(guild)
+    async def version(ctx: commands.Context) -> None:
+        """
+        Gets the current version of the bot.
+
+        Args:
+            ctx (discord.ext.commands.Context): The context with which the
+                                                command was invoked.
+        """
+        response = discord.Embed()
+        response.title = f"Version Info:"
+
+        # TODO: Check if the most recent version using git ls-remote.
+
+        await ctx.reply(embed=response)
+
     @bot.hybrid_command(name="core_reload", with_app_command=True)
     @app_commands.guilds(guild)
     @commands.has_permissions(administrator=True)
