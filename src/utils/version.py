@@ -30,6 +30,12 @@ class Version:
                 return True
         return False
 
+    def get_most_recent_stable_version(self):
+        ...
+
+    def get_most_recent_rolling_version(self):
+        ...
+
     def _get_remote_commit_hashes(self) -> dict:
         version_hashes = {}
         delimited_remote_hashes = subprocess.getoutput(
