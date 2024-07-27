@@ -43,6 +43,7 @@ class Version:
                 branch_name = ""
             if character != "\n":
                 branch_name += character
+        lines.append(branch_name)
 
         for line in lines:
             items = line.split(":")
