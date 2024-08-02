@@ -22,6 +22,8 @@ RUN pip install -r ./requirements.txt && \
     apt update && \
     apt install -y supervisor
 
+RUN chmod 755 /init.sh
+
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 CMD ["/init.sh"]
