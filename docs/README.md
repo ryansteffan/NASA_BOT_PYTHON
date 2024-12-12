@@ -1,3 +1,14 @@
+# END OF LIFE
+The development of the bot is being moved to end of life starting Jan 1, 2025.
+I have made the decission to due to me not having as much time to maintain it and I want to use the time that I do have to work on new projects.
+
+What can you expect from this:
+* The bot will not get any new features.
+* Security fixes will be provided if there are major security flaws.
+* A version 1.0.0 will be published.
+* If there is a major change to the discord api that renders the bot non-functional, I will supply fixes until Jan 1, 2026 
+* If you have any questions please contact me at the same email used to report bugs.
+
 # Welcome to NASA_Bot_Python
 
 NASA_Bot_Python is a simple, extensible discord bot with a focus on stability and
