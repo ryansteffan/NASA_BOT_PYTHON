@@ -1,4 +1,5 @@
 import datetime
+import tempfile
 
 import discord
 from discord import app_commands
@@ -54,6 +55,12 @@ class APOD(commands.GroupCog, name="apod"):
         else:
             image_description = apod.explanation
             image_url = apod.url
+
+            # Download the image to a temporary file
+            with tempfile.TemporaryFile(prefix="apod_image") as temp_file:
+                apod.download_image(temp_file.name)
+            image_file = discord.File(temp_file.name)
+
             try:
                 copyright = apod.copyright
             except nasa_api_errors.NasaApiDataNotFoundError:
@@ -65,10 +72,11 @@ class APOD(commands.GroupCog, name="apod"):
                 color=color,
                 description=image_description
             )
-            embed.set_image(url=image_url)
+            embed.set_image(url=f"attachment://{temp_file.name}")
             embed.set_footer(text=copyright)
             try:
-                await interaction.response.send_message(embed=embed)
+                await interaction.response.send_message(embed=embed,
+                                                        file=image_file)
             except Exception as e:
                 nasa_bot_logger.exception(e)
 
@@ -87,23 +95,28 @@ class APOD(commands.GroupCog, name="apod"):
         else:
             image_description = apod.explanation
             image_url = apod.url
-            try:
-                copyright = apod.copyright
-            except nasa_api_errors.NasaApiDataNotFoundError:
-                copyright = "Copyright: NASA"
-            color = discord.Color.dark_blue()
-            embed = discord.Embed(
-                title="Astronomy Picture of the Day",
-                url=image_url,
-                color=color,
-                description=image_description
-            )
-            embed.set_image(url=image_url)
-            embed.set_footer(text=copyright)
-            try:
-                await channel.send(embed=embed)
-            except Exception as e:
-                nasa_bot_logger.exception(e)
+
+            # Download the image to a temporary file
+            with tempfile.TemporaryFile() as temp_file:
+                with open(temp_file.name, "rb") as f:
+                    image_file = discord.File(temp_file.name)
+                    try:
+                        copyright = apod.copyright
+                    except nasa_api_errors.NasaApiDataNotFoundError:
+                        copyright = "Copyright: NASA"
+                    color = discord.Color.dark_blue()
+                    embed = discord.Embed(
+                        title="Astronomy Picture of the Day",
+                        url=image_url,
+                        color=color,
+                        description=image_description
+                    )
+                    embed.set_image(url=f"attachment://{temp_file.name}")
+                    embed.set_footer(text=copyright)
+                    try:
+                        await channel.send(embed=embed, file=image_file)
+                    except Exception as e:
+                        nasa_bot_logger.exception(e)
 
 async def setup(bot: commands.Bot):
     """
