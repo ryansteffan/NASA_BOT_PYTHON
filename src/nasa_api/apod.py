@@ -1,3 +1,5 @@
+import requests
+
 from src.nasa_api.api_request import ApiRequest
 from src.nasa_api.nasa_api_errors import NasaApiDataNotFoundError
 
@@ -177,3 +179,53 @@ class Apod(ApiRequest):
             str: Returns true of the content is an image.
         """
         return self.media_type == "image"
+
+    def download_image(self, file_path: str) -> None:
+        """
+        Downloads the image from the URL to the specified file path.
+
+        Args:
+            file_path (str): The path where the image will be saved.
+
+        Returns: None
+
+        Raises:
+            NasaApiDataNotFoundError: Raised when the request does not return
+            a status code of 200 or if the request does not contain an image.
+        """
+        if self.is_image():
+            with open(file_path, 'wb') as file:
+                response = requests.get(self.url)
+                if response.status_code == 200:
+                    file.write(response.content)
+                else:
+                    raise NasaApiDataNotFoundError(
+                        f"Failed to download image. Status code: "
+                        f"{response.status_code}")
+        else:
+            raise NasaApiDataNotFoundError("Request does not contain an image.")
+
+    def download_hd_image(self, file_path: str) -> None:
+        """
+        Downloads the HD image from the URL to the specified file path.
+
+        Args:
+            file_path (str): The path where the HD image will be saved.
+
+        Returns: None
+
+        Raises:
+            NasaApiDataNotFoundError: Raised when the request does not return
+            a status code of 200 or if the request does not contain an image.
+        """
+        if self.is_image():
+            with open(file_path, 'wb') as file:
+                response = requests.get(self.hdurl)
+                if response.status_code == 200:
+                    file.write(response.content)
+                else:
+                    raise NasaApiDataNotFoundError(
+                        f"Failed to download HD image. Status code: "
+                        f"{response.status_code}")
+        else:
+            raise NasaApiDataNotFoundError("Request does not contain an image.")

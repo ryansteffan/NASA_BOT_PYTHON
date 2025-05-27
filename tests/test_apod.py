@@ -1,6 +1,8 @@
+import tempfile
 from unittest import TestCase
 
 import responses
+from PIL import Image
 
 from src.nasa_api.apod import Apod
 from src.nasa_api.nasa_api_errors import NasaApiDataNotFoundError
@@ -64,6 +66,16 @@ class TestApod(TestCase):
         "title": "A Total Solar Eclipse Close-Up in Real Time",
         "url": "https://www.youtube.com/embed/5D9j-8Vhyto?rel=0&showinfo=0"
     }
+
+    # Make a fake image that is used as a mock
+    fake_image = Image.new('RGB', (100, 100), color='blue').tobytes()
+
+    # Set up a temporary directory for testing image downloads
+    temp_dir = tempfile.TemporaryDirectory(dir=".", suffix="_temp")
+    test_file = tempfile.NamedTemporaryFile(suffix=".yaml", delete=False,
+                                            dir=temp_dir.name)
+    test_file_path = test_file.name
+    test_file.close()
 
     @responses.activate
     def test_init_image_endpoint_is_set(self):
@@ -584,3 +596,193 @@ class TestApod(TestCase):
         # Assert
         expected = False
         self.assertEqual(actual, expected)
+
+    @responses.activate
+    def test_download_image_raises_NasaApiDataNotFoundError_for_status_code(
+            self):
+        # Arrange
+        endpoint = self.image_endpoint
+        api_data = self.image_request_data
+        responses.add(
+            responses.GET,
+            url=endpoint,
+            json=api_data,
+            status=200,
+            content_type="application/json"
+        )
+        # Mock the image URL
+        responses.add(
+            responses.GET,
+            url=api_data["url"],
+            status=404
+        )
+        target = Apod(endpoint)
+
+        # Act
+        with self.assertRaises(NasaApiDataNotFoundError) as context:
+            target.download_image(self.test_file_path)
+
+        # Assert
+        expected = "Failed to download image. Status code: 404"
+        self.assertEqual(str(context.exception), expected)
+
+    @responses.activate
+    def test_download_image_raises_NasaApiDataNotFoundError_for_no_image(self):
+        # Arrange
+        endpoint = self.image_endpoint
+        # Copy the data to ensure the other tests are not affected
+        api_data = self.image_request_data.copy()
+
+        # Simulate that the request type is not an image
+        api_data["media_type"] = "none"
+
+        responses.add(
+            responses.GET,
+            url=endpoint,
+            json=api_data,
+            status=200,
+            content_type="application/json"
+        )
+        # Mock the video URL
+        responses.add(
+            responses.GET,
+            url=api_data["url"],
+            status=200,
+            content_type="application/json"
+        )
+        target = Apod(endpoint)
+
+        # Act
+        with self.assertRaises(NasaApiDataNotFoundError) as context:
+            target.download_image(self.test_file_path)
+
+        # Assert
+        expected = "Request does not contain an image."
+        self.assertEqual(str(context.exception), expected)
+
+    @responses.activate
+    def test_download_image_saves_image_to_file(self):
+        # Arrange
+        endpoint = self.image_endpoint
+        api_data = self.image_request_data
+        responses.add(
+            responses.GET,
+            url=endpoint,
+            json=api_data,
+            status=200,
+            content_type="application/json"
+        )
+        # Mock the image URL
+        responses.add(
+            responses.GET,
+            url=api_data["url"],
+            body=self.fake_image,
+            status=200,
+            content_type="image/jpeg"
+        )
+        target = Apod(endpoint)
+
+        # Act
+        target.download_image(self.test_file_path)
+
+        # Assert
+        with open(self.test_file_path, 'rb') as file:
+            actual_content = file.read()
+            expected_content = self.fake_image
+        self.assertEqual(actual_content, expected_content)
+
+    # HD URL download tests.
+    @responses.activate
+    def test_download_hd_image_raises_NasaApiDataNotFoundError_for_status_code(
+            self):
+        # Arrange
+        endpoint = self.image_endpoint
+        api_data = self.image_request_data
+        responses.add(
+            responses.GET,
+            url=endpoint,
+            json=api_data,
+            status=200,
+            content_type="application/json"
+        )
+        # Mock the image URL
+        responses.add(
+            responses.GET,
+            url=api_data["hdurl"],
+            status=404
+        )
+        target = Apod(endpoint)
+
+        # Act
+        with self.assertRaises(NasaApiDataNotFoundError) as context:
+            target.download_hd_image(self.test_file_path)
+
+        # Assert
+        expected = "Failed to download HD image. Status code: 404"
+        self.assertEqual(str(context.exception), expected)
+
+    @responses.activate
+    def test_download_hd_image_raises_NasaApiDataNotFoundError_for_no_image(
+            self):
+        # Arrange
+        endpoint = self.image_endpoint
+        # Copy the data to ensure the other tests are not affected
+        api_data = self.image_request_data.copy()
+
+        # Simulate that the request type is not an image
+        api_data["media_type"] = "none"
+
+        responses.add(
+            responses.GET,
+            url=endpoint,
+            json=api_data,
+            status=200,
+            content_type="application/json"
+        )
+        # Mock the video URL
+        responses.add(
+            responses.GET,
+            url=api_data["hdurl"],
+            status=200,
+            content_type="application/json"
+        )
+        target = Apod(endpoint)
+
+        # Act
+        with self.assertRaises(NasaApiDataNotFoundError) as context:
+            target.download_hd_image(self.test_file_path)
+
+        # Assert
+        expected = "Request does not contain an image."
+        self.assertEqual(str(context.exception), expected)
+
+    @responses.activate
+    def test_download_hd_image_saves_image_to_file(self):
+        # Arrange
+        endpoint = self.image_endpoint
+        api_data = self.image_request_data
+        responses.add(
+            responses.GET,
+            url=endpoint,
+            json=api_data,
+            status=200,
+            content_type="application/json"
+        )
+        # Mock the image URL
+        responses.add(
+            responses.GET,
+            url=api_data["hdurl"],
+            body=self.fake_image,
+            status=200,
+            content_type="image/jpeg"
+        )
+        target = Apod(endpoint)
+
+        # Act
+        target.download_hd_image(self.test_file_path)
+
+        # Assert
+        with open(self.test_file_path, 'rb') as file:
+            actual_content = file.read()
+            expected_content = self.fake_image
+        self.assertEqual(actual_content, expected_content)

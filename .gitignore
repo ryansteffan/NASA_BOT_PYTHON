@@ -177,3 +177,6 @@ pyrightconfig.json
 logs/
 .venv/
 .idea/
+
+# My Files
+test.py
