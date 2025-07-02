@@ -6,5 +6,5 @@ mkdocs
 mkdocs-material
 mkdocstrings
 mkdocstrings-python
-pillow~=11.2.1
+pillow~=11.3.0
 audioop-lts
